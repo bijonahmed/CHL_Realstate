@@ -243,7 +243,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::get('languagerow/{id}', [SettingController::class, 'chkLanguagerow']);
         Route::get('getsSliderImages', [SettingController::class, 'getsSliderImages']);
         Route::get('getsGallery', [SettingController::class, 'getsGallery']);
-   
+		Route::get('getsOurProperties', [SettingController::class, 'getsOurProperties']);
         Route::get('getPropertiesLocation', [SettingController::class, 'getPropertiesLocation']);
         Route::get('getsFeaturesProperSliders', [SettingController::class, 'getsFeaturesProperSliders']);
         Route::get('getsServiceList', [SettingController::class, 'getsServiceList']);

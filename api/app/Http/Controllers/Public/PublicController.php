@@ -315,20 +315,41 @@ class PublicController extends Controller
 
     public function sendContact(Request $request)
     {
-
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'name'             => 'required',
-            'email'            => 'required',
-            'subject'          => 'required',
-            'message'          => 'required',
+            'name'    => 'required',
+            'phone'    => 'required',
+            'email'   => 'required|email',
+            'message' => 'required',
         ]);
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        //Please add email qeue...
+        $name    = $request->input('name');
+        $email   = $request->input('email');
+        $phone   = $request->input('phone', 'N/A');
+        $service = $request->input('service', 'N/A');
+        $message = $request->input('message');
 
-        return response()->json("Send mail", 200);
+        $to      = "mdbijon@gmail.com";
+        $subject = "Contact Form Submission";
+
+        $body = "You have received a new message from the contact form:\n\n";
+        $body .= "Name: $name\n";
+        $body .= "Email: $email\n";
+        $body .= "Phone: $phone\n";
+        $body .= "Service: $service\n";
+        $body .= "Message:\n$message\n";
+
+        $headers = "From: $email\r\n";
+        $headers .= "Reply-To: $email\r\n";
+        $headers .= "CC: mdbijon@gmail.com, concreteholgingsltd@gmail.com\r\n";
+
+        if (mail($to, $subject, $body, $headers)) {
+            return response()->json("Mail sent successfully", 200);
+        } else {
+            return response()->json("Failed to send email", 500);
+        }
     }
 }

@@ -6,6 +6,10 @@ import Header from "../components/GuestNavbar";
 import { Helmet } from "react-helmet";
 
 const Contact = () => {
+  const [captchaQuestion, setCaptchaQuestion] = useState("");
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [userCaptchaInput, setUserCaptchaInput] = useState("");
+
   const [data, setName] = useState({});
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +18,13 @@ const Contact = () => {
     message: "",
   });
   const [showModal, setShowModal] = useState(false);
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10);
+    const num2 = Math.floor(Math.random() * 10);
+    setCaptchaQuestion(`${num1} + ${num2}`);
+    setCaptchaAnswer((num1 + num2).toString());
+  };
 
   const fetchGlobalData = async () => {
     try {
@@ -26,30 +37,62 @@ const Contact = () => {
 
   useEffect(() => {
     fetchGlobalData();
+    generateCaptcha();
   }, []);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`/public/sendContact`, formData); // Laravel endpoint
-      if (response.status === 200) {
-        setShowModal(true);
-        setFormData({ name: "", email: "", subject: "", message: "" });
-      } else {
-        alert("Something went wrong!");
+  const [globalData, setGlobalData] = useState({});
+  useEffect(() => {
+    const fetchGlobalData = async () => {
+      try {
+        const response = await axios.get(`/public/getGlobalData`);
+        setGlobalData(response.data);
+      } catch (error) {
+        console.error("Error fetching global data:", error);
       }
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Submission failed. Try again.");
+    };
+
+    fetchGlobalData();
+  }, []);
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (userCaptchaInput.trim() !== captchaAnswer) {
+    alert("CAPTCHA answer is incorrect!");
+    generateCaptcha(); // regenerate captcha on error
+    return;
+  }
+
+  try {
+    const response = await axios.post(`/public/sendContact`, formData);
+    if (response.status === 200) {
+      setShowModal(true);
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        service: "",
+        message: "",
+      });
+      setUserCaptchaInput(""); // reset captcha input
+      generateCaptcha(); // regenerate captcha on success
+    } else {
+      alert("Something went wrong!");
     }
-  };
+  } catch (error) {
+    console.error("Submission error:", error);
+    alert("Submission failed. Try again.");
+  }
+};
+
 
   const closeModal = () => setShowModal(false);
 
@@ -66,49 +109,49 @@ const Contact = () => {
         {/*===== CONTACT AREA STARTS =======*/}
         <div className="contact-inner">
           <div className="container-fluid">
-          <div
-            style={{
-              padding: "20px",
-              backgroundColor: "#ffffff",
-              border: "1px solid #ced4da", // Lighter but more visible gray
-              borderRadius: "8px",
-              margin: "0 0 30px 0", // Ensure no side margins block the border
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)", // Soft shadow for lift
-            }}>
-            <nav aria-label="breadcrumb">
-              <ol
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  listStyle: "none",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "#495057",
-                }}
-              >
-                <li style={{ marginRight: "8px" }}>
-                  <Link
-                    to="/"
-                    style={{
-                      textDecoration: "none",
-                      color: "#0d6efd",
-                      transition: "color 0.2s ease",
-                    }}
-                    onMouseOver={(e) => (e.target.style.color = "#0a58ca")}
-                    onMouseOut={(e) => (e.target.style.color = "#0d6efd")}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li style={{ marginRight: "8px", color: "#adb5bd" }}>/</li>
-                <li style={{ color: "#6c757d" }}>Contact</li>
-              </ol>
-            </nav>
-          </div>
-
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                border: "1px solid #ced4da", // Lighter but more visible gray
+                borderRadius: "8px",
+                margin: "0 0 30px 0", // Ensure no side margins block the border
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)", // Soft shadow for lift
+              }}
+            >
+              <nav aria-label="breadcrumb">
+                <ol
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    listStyle: "none",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    color: "#495057",
+                  }}
+                >
+                  <li style={{ marginRight: "8px" }}>
+                    <Link
+                      to="/"
+                      style={{
+                        textDecoration: "none",
+                        color: "#0d6efd",
+                        transition: "color 0.2s ease",
+                      }}
+                      onMouseOver={(e) => (e.target.style.color = "#0a58ca")}
+                      onMouseOut={(e) => (e.target.style.color = "#0d6efd")}
+                    >
+                      Home
+                    </Link>
+                  </li>
+                  <li style={{ marginRight: "8px", color: "#adb5bd" }}>/</li>
+                  <li style={{ color: "#6c757d" }}>Contact</li>
+                </ol>
+              </nav>
+            </div>
 
             <div className="row">
               <div className="col-lg-4 col-md-6">
@@ -132,9 +175,7 @@ const Contact = () => {
                   </div>
                   <div className="content">
                     <p>Our Email</p>
-                    <a href="mailto:Housarealesate@gmail.com">
-                     {data.email}
-                    </a>
+                    <a href="mailto:Housarealesate@gmail.com">{data.email}</a>
                   </div>
                 </div>
               </div>
@@ -160,13 +201,12 @@ const Contact = () => {
                   <div className="content">
                     <p>Phone</p>
                     <a
-  href={`https://wa.me/88${data.whatsApp}`}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  {data.whatsApp}
-</a>
-
+                      href={`https://wa.me/88${data.whatsApp}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {data.whatsApp}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -205,55 +245,95 @@ const Contact = () => {
                   <div className="bg-area">
                     <h3>Send Us A Message</h3>
                     <div className="space8" />
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <div className="input-area">
-                          <input type="text" placeholder="Your Name" />
+                    <form onSubmit={handleSubmit}>
+                      <div className="row">
+                        <div className="col-lg-12">
+                          <div className="input-area">
+                            <input
+                              type="text"
+                              name="name"
+                              placeholder="Your Full Name"
+                              value={formData.name}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-6">
-                        <div className="input-area">
-                          <input type="text" placeholder="Last Name*" />
+
+                        <div className="col-lg-6">
+                          <div className="input-area">
+                            <input
+                              type="number"
+                              name="phone"
+                              placeholder="Phone Number"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-6">
-                        <div className="input-area">
-                          <input type="number" placeholder="Phone Number " />
+
+                        <div className="col-lg-6">
+                          <div className="input-area">
+                            <input
+                              type="email"
+                              name="email"
+                              placeholder="Email Address*"
+                              value={formData.email}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-6">
-                        <div className="input-area">
-                          <input type="email" placeholder="Email Address*" />
+
+                        <div className="col-lg-12">
+                          <div className="input-area">
+                            <textarea
+                              name="message"
+                              placeholder="Your Message"
+                              value={formData.message}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="input-area">
-                          <input type="text" placeholder="Service Type*" />
-                        </div>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="input-area">
-                          <textarea
-                            placeholder="Your Message"
-                            defaultValue={""}
+
+                        <div className="form-group">
+                          <label htmlFor="captcha">{captchaQuestion} = ?</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="captcha"
+                            value={userCaptchaInput}
+                            onChange={(e) =>
+                              setUserCaptchaInput(e.target.value)
+                            }
+                            required
                           />
                         </div>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="space16" />
-                        <div className="input-area text-end">
-                          <button type="submit" className="vl-btn1">
-                            Submit Now{" "}
-                            <span className="arrow1">
-                              <i className="fa-solid fa-arrow-right" />
-                            </span>
-                            <span className="arrow2">
-                              <i className="fa-solid fa-arrow-right" />
-                            </span>
-                          </button>
+
+                        <div className="col-lg-12">
+                          <div className="space16" />
+                          <div className="input-area text-end">
+                            <button type="submit" className="vl-btn1">
+                              Submit Now{" "}
+                              <span className="arrow1">
+                                <i className="fa-solid fa-arrow-right" />
+                              </span>
+                              <span className="arrow2">
+                                <i className="fa-solid fa-arrow-right" />
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+
+                      {showModal && (
+                        <div className="alert alert-success mt-3">
+                          Thank you! Your message has been sent.
+                        </div>
+                      )}
+                    </form>
                   </div>
                 </div>
               </div>
