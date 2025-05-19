@@ -1,0 +1,49 @@
+.review-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.testimonial-box {
+  background: #f9f9f9;
+  border-radius: 16px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e6e6e6;
+  transition: all 0.3s ease;
+}
+
+.testimonial-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.testimonial-quote {
+  font-size: 1.1rem;
+  color: #333;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.testimonial-author {
+  font-size: 1rem;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.testimonial-author .role {
+  color: #666;
+  font-weight: normal;
+  font-style: italic;
+}
+
+.rating-stars {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin-top: 10px;
+  gap: 5px;
+}
