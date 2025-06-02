@@ -1,0 +1,8 @@
+MAIL_MAILER=smtp
+MAIL_HOST=mail.moon-nest.com
+MAIL_PORT=465
+MAIL_USERNAME=mkt@moon-nest.com
+MAIL_PASSWORD=bangladesh@123
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=no-reply@moon-nest.com
+MAIL_FROM_NAME="moon-nest.com"
