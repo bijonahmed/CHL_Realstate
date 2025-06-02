@@ -107,6 +107,7 @@ const Index = () => {
                       <div className="position-relative">
                         <img
                           className="img-fluid"
+                          loading="lazy"
                           src={room.roomImage || "/img/room-3.jpg"}
                           alt="Room Image"
                         />

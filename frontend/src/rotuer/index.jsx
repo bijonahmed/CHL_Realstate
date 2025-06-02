@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import UserLogin from "../pages/UserLogin.jsx";
 import Contact from "../pages/Contact.jsx";
 import Service from "../pages/Service.jsx";
+import Project from "../pages/Project.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
 import VissionMission from "../pages/VissionMission.jsx";
 import ChangePassword from "../pages/users/ChangePassword.jsx";
@@ -42,6 +43,7 @@ const AppRouter = () => {
       <Route path="/forget-password" element={<Forgetpassword />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/service" element={<Service />} />
+      <Route path="/project/:slug" element={<Project />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/our-vision" element={<VissionMission />} />
       <Route path="/user/change-password" element={<ChangePassword />} />

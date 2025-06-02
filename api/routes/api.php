@@ -20,6 +20,8 @@ use App\Http\Controllers\Booking\BookingController;
 use App\Http\Controllers\Booking\GuestBookingController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Report\ReportController;
+use App\Http\Controllers\Getway\SenMailController;
+use App\Http\Controllers\Getway\SenSMSController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/cc', function () {
@@ -63,6 +65,7 @@ Route::group([
 ], function () {
     Route::post('bookingRequest', [GuestBookingController::class, 'bookingRequest']);
     Route::get('/activeRooms', [PublicController::class, 'activeRooms']);
+    Route::get('/projectPost', [PublicController::class, 'projectPost']);
     Route::get('/getServiceList', [PublicController::class, 'getServiceList']);
     Route::get('/getPostData', [PublicController::class, 'getPostData']);
     Route::get('/getRoomDetails', [PublicController::class, 'getRoomDetails']);
@@ -78,18 +81,7 @@ Route::group([
     Route::post('/sendContact', [PublicController::class, 'sendContact']);
     Route::post('/filterBooking', [PublicController::class, 'filterBooking']);
 });
-/*
-Route::group([
-    'prefix' => 'booking'
-], function () {
-    Route::get('getUserRow', [BookingController::class, 'editUserId']);
-    Route::get('/getRoomDetails', [BookingController::class, 'getRoomDetails']);
-    Route::post('bookingRequest', [BookingController::class, 'bookingRequest']);
-    Route::get('/getBookingDetails', [BookingController::class, 'getBookingDetails']);
-    Route::get('/activeBookingRooms', [BookingController::class, 'activeBookingRooms']);
-  
-});
-*/
+
 Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
 
     Route::group([
@@ -218,6 +210,15 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
     ], function () {
         Route::get('countBookingData', [DashboardController::class, 'countBookingData']);
         Route::get('getTodayBookingList', [DashboardController::class, 'getTodayBookingList']);
+    });
+
+
+    Route::group([
+        //'middleware' => 'api',
+        'prefix' => 'getway'
+    ], function () {
+        Route::post('send-bulk-email', [SenMailController::class, 'sendBulkEmail']);
+        Route::post('send-bulk-sms', [SenSMSController::class, 'sendbulksms']);
     });
 
 

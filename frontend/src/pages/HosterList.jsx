@@ -87,6 +87,7 @@ const HosterList = () => {
       <img
         src={imageSrc}
         alt={alt}
+        loading="lazy"
         className="img-fluid"
         onError={handleError}
       />
@@ -171,6 +172,7 @@ const HosterList = () => {
                       <img
                         src="/images/250x250_Google_ads_size.gif"
                         alt="pic"
+                        loading="lazy"
                         className="ads_image img-fluid"
                       />
                     </div>
@@ -180,6 +182,7 @@ const HosterList = () => {
                       <img
                         src="/images/adsbannar.webp"
                         alt="pic"
+                        loading="lazy"
                         className="ads_image img-fluid"
                       />
                     </div>
@@ -197,6 +200,7 @@ const HosterList = () => {
                       <img
                         src="/images/providers/providers(1).png"
                         alt="pic"
+                        loading="lazy"
                         className="img-fluid"
                       />
                     </a>

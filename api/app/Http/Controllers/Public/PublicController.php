@@ -86,6 +86,30 @@ class PublicController extends Controller
     }
 
 
+    public function projectPost(Request $request)
+    {
+        $postCategoryId = $request->post_category_id;
+        try {
+            $data = Post::where('posts.post_category_id', $postCategoryId)->where('posts.status', 1)
+                ->leftJoin('post_category', 'post_category.id', '=', 'posts.post_category_id') // Join first image
+                ->select('posts.*', 'post_category.name as postCatName')
+                ->get()
+                ->map(function ($arrdata) {
+                    return [
+                        'id'              => $arrdata->id,
+                        'name'            => $arrdata->name,
+                        'slug'            => $arrdata->slug,
+                        'description'     => $arrdata->description,
+                        'postCatName'     => $arrdata->postCatName,
+                        'thumnail_img'    => !empty($arrdata->thumnail_img) ? url($arrdata->thumnail_img) : ""
+                    ];
+                });
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
 
     public function activeRooms(Request $request)
     {
@@ -270,7 +294,6 @@ class PublicController extends Controller
         }
     }
 
-
     public function getGlobalSettingdata()
     {
         try {
@@ -279,6 +302,9 @@ class PublicController extends Controller
             $response = [
                 'data'         => $data,
                 'banner_image' => !empty($data->banner_image) ? url($data->banner_image) : "",
+                'ongoing_image'   => !empty($data->ongoing_image) ? url($data->ongoing_image) : "",
+                'complete_image'  => !empty($data->complete_image) ? url($data->complete_image) : "",
+                'future_image'    => !empty($data->future_image) ? url($data->future_image) : "",
                 'message' => 'success'
             ];
             return response()->json($response, 200);

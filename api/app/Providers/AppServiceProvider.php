@@ -17,8 +17,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        //
+    public function boot()
+{
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        request()->headers->set('Authorization', $_SERVER['HTTP_AUTHORIZATION']);
     }
+}
 }

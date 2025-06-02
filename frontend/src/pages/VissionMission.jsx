@@ -82,21 +82,11 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-        {/*===== HERO AREA ENDS =======*/}
-        <div className="space30" />
+    
         {/*===== ABOUT AREA STARTS =======*/}
         {/*===== OTHERS AREA STARTS =======*/}
         <div className="miision1">
           <div className="containr-fluid">
-            <div className="row">
-              <div className="col-lg-6 m-auto">
-                <div className="heading1 text-center space-margin33">
-                  <h5>Mision &amp; Vision</h5>
-                  <div className="space16" />
-                  <h2>Our Mision &amp; Vision</h2>
-                </div>
-              </div>
-            </div>
             <div className="row align-items-center">
               <div className="col-lg-12">
                 <div className="mission-heading heading1">

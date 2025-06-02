@@ -91,7 +91,7 @@ const PostCategoryAdd = () => {
   return (
     <>
       <Helmet>
-        <title>Add Role</title>
+        <title>Add Post Category</title>
       </Helmet>
 
       <div>

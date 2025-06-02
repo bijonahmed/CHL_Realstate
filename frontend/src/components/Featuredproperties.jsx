@@ -60,6 +60,7 @@ const Featuredproperties = () => {
                 <img
                   src={property.sliderImage}
                   alt={property.title_name}
+                  loading="lazy"
                   className="property-image img-fluid"
                 />
               </a>

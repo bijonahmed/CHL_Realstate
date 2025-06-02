@@ -73,6 +73,7 @@ const GameCategoryZone = () => {
             <img
                 src={imageSrc}
                 alt={alt}
+                loading="lazy"
                 className="img-fluid"
                 onError={handleError}
             />
@@ -110,7 +111,7 @@ const GameCategoryZone = () => {
                                 <center>
                                     <Loader />
                                     <div className="loading-indicator">
-                                        <img src="/images/loader.gif" />
+                                        <img src="/images/loader.gif" loading="lazy" />
                                         <span className="text-black">Loading.....</span>
                                     </div>
                                 </center>
@@ -120,7 +121,7 @@ const GameCategoryZone = () => {
                                     {responseData.map((game, index) => (
                                         <div className="game_box" key={index}>
                                             <Link to={`/play-game/${game.game_code.toLowerCase()}`} className="home_hoster_link">
-                                                <ImageWithFallback src={game.imagepath} className="img-fluid" />
+                                                <ImageWithFallback src={game.imagepath} loading="lazy" className="img-fluid" />
                                                 <h5><center>{game.translate_name}</center></h5>
                                             </Link>
                                         </div>

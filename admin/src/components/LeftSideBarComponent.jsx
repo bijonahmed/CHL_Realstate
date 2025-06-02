@@ -10,23 +10,22 @@ const LeftSideBarComponent = () => {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [activeMenu, setActiveMenu] = useState(null);
-  const token = JSON.parse(sessionStorage.getItem("token"));
+  const { getToken, token, logout } = AuthUser();
 
   useEffect(() => {
-    axios.get("/setting/dynamicLeftSidebarmenu", {
+    axios
+      .get("/setting/dynamicLeftSidebarmenu", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-       
-      }).then((response) => {
+      })
+      .then((response) => {
         setMenuItems(response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the menu:", error);
       });
   }, []);
-
-
 
   const toggleSubmenu = (index) => {
     setActiveMenu(activeMenu === index ? null : index);

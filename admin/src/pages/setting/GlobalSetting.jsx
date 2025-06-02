@@ -18,7 +18,13 @@ const GlobalSetting = () => {
   const [youtubelink, setYoutubeChaneelLink] = useState("");
   const [about_us, setAboutus] = useState("");
   const [bannerImage, setBannerImage] = useState(null);
+  const [ongoingImage, setOngoingImage] = useState(null);
+  const [completeImage, setCompleteImage] = useState(null);
+  const [futureImage, setFutureImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [ongoingpreview, setOngoingPreview] = useState(null);
+  const [completepreview, setCompletePreview] = useState(null);
+  const [futurepreview, setFuturePreview] = useState(null);
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token")?.replace(/^"(.*)"$/, "$1");
 
@@ -40,6 +46,60 @@ const GlobalSetting = () => {
     }
   };
 
+  const handleOngoingImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image size must be less than 2MB.");
+        return;
+      }
+      setOngoingImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setOngoingPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCompleteImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image size must be less than 2MB.");
+        return;
+      }
+      setCompleteImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setCompletePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFutureImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image size must be less than 2MB.");
+        return;
+      }
+      setFutureImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setFuturePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const defaultFetch = async () => {
     try {
       const response = await axios.get(`/setting/settingrowSystem`, {
@@ -47,6 +107,10 @@ const GlobalSetting = () => {
       });
       const userData = response.data.data;
       const bannerimage = response.data.banner_image;
+      const ongoing_image = response.data.ongoing_image;
+      const complete_image = response.data.complete_image;
+      const future_image = response.data.future_image;
+
       setName(userData.name || "");
       setSugan(userData.slugan || "");
       setEmail(userData.email || "");
@@ -57,6 +121,9 @@ const GlobalSetting = () => {
       setAboutus(userData.about_us || "");
 
       setPreview(bannerimage || "");
+      setOngoingPreview(ongoing_image || "");
+      setCompletePreview(complete_image || "");
+      setFuturePreview(future_image || "");
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -74,8 +141,21 @@ const GlobalSetting = () => {
       formData.append("whatsApp", whatsApp);
       formData.append("fblink", fblink);
       formData.append("youtubelink", youtubelink);
+
       if (bannerImage) {
         formData.append("banner_image", bannerImage);
+      }
+
+      if (ongoingImage) {
+        formData.append("ongoing_image", ongoingImage);
+      }
+
+      if (completeImage) {
+        formData.append("complete_image", completeImage);
+      }
+
+      if (futureImage) {
+        formData.append("future_image", futureImage);
       }
 
       await axios.post("/setting/saveSetting", formData, {
@@ -153,16 +233,53 @@ const GlobalSetting = () => {
               <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
                   {[
-                    { label: "Company Name", value: name, setter: setName, key: "name" },
-                    { label: "Footer Top Title", value: slugan, setter: setSugan, key: "slugan" },
-                    { label: "WhatsApp Number", value: whatsApp, setter: setWhatsApp, key: "whatsApp" },
-                    { label: "Email", value: email, setter: setEmail, key: "email" },
-                    { label: "Address", value: address, setter: setAddress, key: "address" },
-                    { label: "Facebook Page Link", value: fblink, setter: setFacebookPagesLink, key: "fblink" },
-                    { label: "Youtube Channel Link", value: youtubelink, setter: setYoutubeChaneelLink, key: "youtubelink" },
+                    {
+                      label: "Company Name",
+                      value: name,
+                      setter: setName,
+                      key: "name",
+                    },
+                    {
+                      label: "Footer Top Title",
+                      value: slugan,
+                      setter: setSugan,
+                      key: "slugan",
+                    },
+                    {
+                      label: "WhatsApp Number",
+                      value: whatsApp,
+                      setter: setWhatsApp,
+                      key: "whatsApp",
+                    },
+                    {
+                      label: "Email",
+                      value: email,
+                      setter: setEmail,
+                      key: "email",
+                    },
+                    {
+                      label: "Address",
+                      value: address,
+                      setter: setAddress,
+                      key: "address",
+                    },
+                    {
+                      label: "Facebook Page Link",
+                      value: fblink,
+                      setter: setFacebookPagesLink,
+                      key: "fblink",
+                    },
+                    {
+                      label: "Youtube Channel Link",
+                      value: youtubelink,
+                      setter: setYoutubeChaneelLink,
+                      key: "youtubelink",
+                    },
                   ].map((field) => (
                     <div className="row mb-3" key={field.key}>
-                      <label className="col-sm-3 col-form-label">{field.label}</label>
+                      <label className="col-sm-3 col-form-label">
+                        {field.label}
+                      </label>
                       <div className="col-sm-9">
                         <input
                           type="text"
@@ -172,12 +289,13 @@ const GlobalSetting = () => {
                           onChange={(e) => field.setter(e.target.value)}
                         />
                         {errors[field.key] && (
-                          <div style={{ color: "red" }}>{errors[field.key][0]}</div>
+                          <div style={{ color: "red" }}>
+                            {errors[field.key][0]}
+                          </div>
                         )}
                       </div>
                     </div>
                   ))}
-
                   <div className="row mb-3">
                     <label className="col-sm-3 col-form-label">About Us</label>
                     <div className="col-sm-9">
@@ -185,6 +303,7 @@ const GlobalSetting = () => {
                         className="form-control"
                         placeholder="About Us"
                         value={about_us}
+                        rows={6}
                         onChange={(e) => setAboutus(e.target.value)}
                       ></textarea>
                       {errors.about_us && (
@@ -192,9 +311,10 @@ const GlobalSetting = () => {
                       )}
                     </div>
                   </div>
-
                   <div className="row mb-3">
-                    <label className="col-sm-3 col-form-label">Banner Image</label>
+                    <label className="col-sm-3 col-form-label">
+                      Banner Image
+                    </label>
                     <div className="col-sm-9">
                       <input
                         type="file"
@@ -211,7 +331,75 @@ const GlobalSetting = () => {
                       )}
                     </div>
                   </div>
+                  Our service
+                  <hr />
+                  <div className="row">
+                    {/* Ongoing Project */}
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Ongoing Project</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="form-control"
+                        onChange={handleOngoingImageChange}
+                      />
+                      {ongoingpreview && (
+                        <img
+                          src={ongoingpreview}
+                          alt="Preview"
+                          style={{
+                            marginTop: "10px",
+                            height: "500px",
+                            maxWidth: "100%",
+                          }}
+                        />
+                      )}
+                    </div>
 
+                    {/* Complete Project */}
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Complete Project</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="form-control"
+                        onChange={handleCompleteImageChange}
+                      />
+                      {completepreview && (
+                        <img
+                          src={completepreview}
+                          alt="Preview"
+                          style={{
+                            marginTop: "10px",
+                            height: "500px",
+                            maxWidth: "100%",
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    {/* Future Project */}
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Future Project</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="form-control"
+                        onChange={handleFutureImageChange}
+                      />
+                      {futurepreview && (
+                        <img
+                          src={futurepreview}
+                          alt="Preview"
+                          style={{
+                            marginTop: "10px",
+                            height: "500px",
+                            maxWidth: "100%",
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <div className="row">
                     <div className="col-sm-9 offset-sm-3">
                       <button type="submit" className="btn btn-primary">

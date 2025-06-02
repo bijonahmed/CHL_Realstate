@@ -38,6 +38,10 @@ import PostList from "../pages/post/PostList.jsx";
 import PostAdd from "../pages/post/PostAdd.jsx";
 import PostEdit from "../pages/post/PostEdit.jsx";
 //Booking
+
+import Sendmail from "../pages/getway/Sendmail.jsx";
+import SendSms from "../pages/getway/SendSms.jsx";
+
 import RoomStatusList from "../pages/booking/RoomStatusList.jsx";
 import BookingList from "../pages/booking/BookingList.jsx";
 import AddNewBooking from "../pages/booking/AddNewBooking.jsx";
@@ -168,6 +172,9 @@ const AppRouter = () => {
       <Route path="/setting/gallery-list" element={<Gallery />} />
       <Route path="/setting/review-list" element={<Review />} />
 
+		{/* Getway */}
+      <Route path="/getway/send-mail" element={<Sendmail />} />
+      <Route path="/getway/send-sms" element={<SendSms />} />
 
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>

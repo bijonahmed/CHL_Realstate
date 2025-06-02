@@ -90,7 +90,6 @@ const AboutUs = () => {
             <div className="row">
               <div className="col-lg-6 m-auto">
                 <div className="heading1 text-center space-margin33">
-                  <h5>About Company</h5>
                   <div className="space16" />
                   <h2>{postData.name}</h2>
                 </div>

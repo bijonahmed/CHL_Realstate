@@ -31,7 +31,7 @@ const WhatsApp = () => {
   style={{ zIndex: 9999 }}
 >
   <img
-    src="/img/whatsapp-icon.png" // Replace with your actual icon path
+    src="/img/whatsapp-icon.png" loading="lazy" // Replace with your actual icon path
     alt="WhatsApp"
     style={{ width: '60px', height: '60px' }}
   />

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -7,17 +8,21 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use AuthorizesRequests;
 use DB;
+
 class Setting extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
 
     public $table = "setting";
-  
+
     protected $fillable = [
-      'id',
-      'slugan',
-      'name',
+        'id',
+        'slugan',
+        'ongoing_image',
+        'complete_image',
+        'future_image',
+        'name',
     ];
 
     public static function filterEmpList($data = array())
@@ -138,40 +143,5 @@ class Setting extends Authenticatable
         $results = DB::select($sqld);
         return $results;
     }
-    public static function editEmpTypeId($id)
-    {
-        return DB::table('employee_type')->where('id', $id)->first();
-    }
-    public static function editPayGroupId($id)
-    {
-        return DB::table('pay_group')->where('id', $id)->first();
-    }
-    public static function editAnnualPayId($id)
-    {
-        return DB::table('annual_pay')->where('id', $id)->first();
-    }
-    public static function editBankMasterId($id)
-    {
-        return DB::table('bank_master')->where('id', $id)->first();
-    }
-    public static function editBankShortCodeId($id)
-    {
-        return DB::table('bank_short_code')->where('id', $id)->first();
-    }
-    public static function edittxtMasterId($id)
-    {
-        return DB::table('tax_master')->where('id', $id)->first();
-    }
-    public static function editPaymentId($id)
-    {
-        return DB::table('payment_type')->where('id', $id)->first();
-    }
-    public static function editWedgesId($id)
-    {
-        return DB::table('wedges_pay_mode')->where('id', $id)->first();
-    }
-    public static function editPayrowId($id)
-    {
-        return DB::table('payroll_pay_item')->where('id', $id)->first();
-    }
+   
 }

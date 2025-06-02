@@ -69,12 +69,14 @@ const Index = () => {
                   <div className="col-lg-6">
                     <div className="cta-images-area">
                       <img
+                      loading="lazy"
                         src="/assets/img/elements/elements7.png"
                         alt="housa"
                         className="elements7 aniamtion-key-1"
                       />
                       <div className="img1 text-end">
                         <img
+                        loading="lazy"
                           src={data.banner_image}
                           alt={data.name}
                           className="img-fluid rounded-circle"

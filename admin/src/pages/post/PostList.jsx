@@ -19,11 +19,7 @@ const PostList = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
-
   const apiUrl = "/post/getPostList";
-
-
-
 
   const handleSort = () => {
     const sortedData = [...data].sort((a, b) => {
@@ -88,7 +84,6 @@ const PostList = () => {
     navigate(`/post/post-edit/${id}`);
   };
 
-
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
@@ -119,7 +114,10 @@ const PostList = () => {
                           <i className="bx bx-home-alt" />
                         </Link>
                       </li>
-                      <li className="breadcrumb-item active" aria-current="page">
+                      <li
+                        className="breadcrumb-item active"
+                        aria-current="page"
+                      >
                         List
                       </li>
                     </ol>
@@ -179,7 +177,8 @@ const PostList = () => {
                           <select
                             className="form-select"
                             value={selectedFilter}
-                            onChange={(e) => setSelectedFilter(e.target.value)}>
+                            onChange={(e) => setSelectedFilter(e.target.value)}
+                          >
                             <option value="">All Status</option>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
@@ -187,7 +186,8 @@ const PostList = () => {
                           <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={fetchData}>
+                            onClick={fetchData}
+                          >
                             Apply
                           </button>
                         </div>
@@ -204,22 +204,33 @@ const PostList = () => {
                           <table className="table table-striped table-bordered">
                             <thead>
                               <tr>
-                                <th className="text-center"
+                                <th
+                                  className="text-center"
                                   onClick={handleSort}
-                                  style={{ cursor: "pointer" }}>
+                                  style={{ cursor: "pointer" }}
+                                >
                                   Name
                                   {sortOrder === "asc" ? (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↑
                                     </span>
                                   ) : (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↓
                                     </span>
                                   )}
                                 </th>
+                                <th className="text-center">Category </th>
                                 <th className="text-center">Status</th>
                                 <th className="text-center">Created Time</th>
                                 <th className="text-center">Action</th>
@@ -230,16 +241,29 @@ const PostList = () => {
                                 data.map((item) => (
                                   <tr key={item.id}>
                                     <td>{item.name}</td>
-                                    <td className="text-center">{item.status}</td>
-                                    <td className="text-center">{item.created_at}</td>
-                                    <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
+                                    <td className="text-right">
+                                      {item.postCategory}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.status}
+                                    </td>
+
+                                    <td className="text-center">
+                                      {item.created_at}
+                                    </td>
+                                    <td className="text-center">
+                                      <a
+                                        href="#"
+                                        onClick={() => handleEdit(item.id)}
+                                      >
+                                        <i className="lni lni-pencil-alt"></i>
+                                      </a>
+                                    </td>
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
-                                  <td
-                                    colSpan="4"
-                                    className="text-center">
+                                  <td colSpan="4" className="text-center">
                                     No data found
                                   </td>
                                 </tr>

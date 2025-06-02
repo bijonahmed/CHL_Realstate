@@ -47,7 +47,7 @@ const GuestNavbar = () => {
               <div className="col-lg-2 col-md-6 col-6">
                 <div className="vl-logo">
                   <Link to="/">
-                    <img src="/assets/img/logo/logo1.png" alt="housa" />
+                    <img src="/assets/img/logo/logo1.png" loading="lazy" alt="housa" />
                   </Link>
                 </div>
               </div>
@@ -94,7 +94,7 @@ const GuestNavbar = () => {
             <div className="vl-offcanvas-header d-flex justify-content-between align-items-center mb-90">
               <div className="vl-offcanvas-logo">
                 <a href="index.html">
-                  <img src="/assets/img/logo/logo1.png" alt="housa" />
+                  <img src="/assets/img/logo/logo1.png" loading="lazy" alt="Image" />
                 </a>
               </div>
               <div className="vl-offcanvas-close">

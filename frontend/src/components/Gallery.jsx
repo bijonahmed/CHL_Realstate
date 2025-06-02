@@ -58,7 +58,7 @@ const Gallery = () => {
               {galleryImages.slice(0, 100).map((img, index) => (
                 <SwiperSlide key={index}>
                   <div className="big-img">
-                    <img src={img.sliderImage} style={{ height: '500px'}} alt={`gallery ${index}`} />
+                    <img src={img.sliderImage} style={{ height: '500px'}} loading="lazy" alt={`gallery ${index}`} />
                   </div>
                 </SwiperSlide>
               ))}
@@ -76,7 +76,7 @@ const Gallery = () => {
               {galleryImages.slice(0, 100).map((img, index) => (
                 <SwiperSlide key={index}>
                   <div className="small-img">
-                    <img src={img.sliderImage} style={{ height: '200px'}} alt={`thumb ${index}`} />
+                    <img src={img.sliderImage} loading="lazy" style={{ height: '200px'}} alt={`thumb ${index}`} />
                   </div>
                 </SwiperSlide>
               ))}

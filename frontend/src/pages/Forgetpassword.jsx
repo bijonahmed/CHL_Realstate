@@ -27,7 +27,7 @@ const Forgetpassword = () => {
               <div className="col-md-12">
                 <div className="login_section w-100">
                   <form action="" className="login_form mx-auto">
-                    <a href="index.html"><img src="/images/LOGO.png" className="img-fluid login_logo" /></a>
+                    <a href="index.html"><img src="/images/LOGO.png" loading="lazy" className="img-fluid login_logo" /></a>
                     <div className="form-group mb-3">
                       <label>Email</label>
                       <input type="email" required placeholder="Email address" className="form-control" />

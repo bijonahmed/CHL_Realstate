@@ -65,8 +65,11 @@ class SettingController extends Controller
         $data = Setting::find(1);
 
         $response = [
-            'data'         => $data,
-            'banner_image' => !empty($data->banner_image) ? url($data->banner_image) : "",
+            'data'            => $data,
+            'banner_image'    => !empty($data->banner_image) ? url($data->banner_image) : "",
+            'ongoing_image'   => !empty($data->ongoing_image) ? url($data->ongoing_image) : "",
+            'complete_image'  => !empty($data->complete_image) ? url($data->complete_image) : "",
+            'future_image'    => !empty($data->future_image) ? url($data->future_image) : "",
             'message' => 'success'
         ];
         return response()->json($response, 200);
@@ -269,6 +272,45 @@ class SettingController extends Controller
             $file_url = $uploadPath . $path;
             $data['banner_image'] = $file_url;
         }
+
+
+        if (!empty($request->file('ongoing_image'))) {
+            $files = $request->file('ongoing_image');
+            $fileName = Str::random(20);
+            $ext = strtolower($files->getClientOriginalExtension());
+            $path = $fileName . '.' . $ext;
+            $uploadPath = '/backend/files/';
+            $upload_url = $uploadPath . $path;
+            $files->move(public_path('/backend/files/'), $upload_url);
+            $file_url = $uploadPath . $path;
+            $data['ongoing_image'] = $file_url;
+        }
+
+
+        if (!empty($request->file('complete_image'))) {
+            $files = $request->file('complete_image');
+            $fileName = Str::random(20);
+            $ext = strtolower($files->getClientOriginalExtension());
+            $path = $fileName . '.' . $ext;
+            $uploadPath = '/backend/files/';
+            $upload_url = $uploadPath . $path;
+            $files->move(public_path('/backend/files/'), $upload_url);
+            $file_url = $uploadPath . $path;
+            $data['complete_image'] = $file_url;
+        }
+
+
+         if (!empty($request->file('future_image'))) {
+            $files = $request->file('future_image');
+            $fileName = Str::random(20);
+            $ext = strtolower($files->getClientOriginalExtension());
+            $path = $fileName . '.' . $ext;
+            $uploadPath = '/backend/files/';
+            $upload_url = $uploadPath . $path;
+            $files->move(public_path('/backend/files/'), $upload_url);
+            $file_url = $uploadPath . $path;
+            $data['future_image'] = $file_url;
+        }   
 
         Setting::where('id', 1)->update($data);
 

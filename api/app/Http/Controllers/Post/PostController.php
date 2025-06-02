@@ -104,8 +104,8 @@ class PostController extends Controller
             'entry_by'                   => $this->userid
         );
         // dd($data);
-        if (!empty($request->file('files'))) {
-            $files = $request->file('files');
+        if (!empty($request->file('bannerImage'))) {
+            $files = $request->file('bannerImage');
             $fileName = Str::random(20);
             $ext = strtolower($files->getClientOriginalExtension());
             $path = $fileName . '.' . $ext;
@@ -173,8 +173,8 @@ class PostController extends Controller
             ->select('posts.*', 'post_category.name as category_name')
             ->join('post_category', 'posts.post_category_id', '=', 'post_category.id')
             ->first();
-        $responseData['data']      = $data;
-        $responseData['images']    = !empty($data->thumnail_img) ? url($data->thumnail_img) : "";
+        $responseData['data']            = $data;
+        $responseData['thumnail_img']    = !empty($data->thumnail_img) ? url($data->thumnail_img) : "";
         // dd($responseData);
         return response()->json($responseData);
     }

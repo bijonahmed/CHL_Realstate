@@ -19,52 +19,39 @@ const Index = () => {
 
   const rawToken = sessionStorage.getItem("token");
   const token = rawToken?.replace(/^"(.*)"$/, "$1");
-
-  const getBookingList = async () => {
-    try {
-      setLoading(true);
-      if (!token) {
-        throw new Error("Token not found in sessionStorage");
-      }
-      const response = await axios.get(`/dashboard/getTodayBookingList`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setBookingData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  console.log("Token from Dashboard : " + token);
 
   const countData = async () => {
     try {
-      if (!token) {
-        throw new Error("Token not found in sessionStorage");
-      }
-      const response = await axios.get(`/dashboard/countBookingData`, {
+      if (!token) throw new Error("Token not found");
+
+      const response = await axios.get("/dashboard/countBookingData", {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        Authorization: `Bearer ${token}`, // ✅ this must match exactly
+        
+      },
       });
+
+      console.log(response.data);
+
       setTotalUsers(response.data.totalUsers);
       setTotalPost(response.data.totalPost);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(
+        "Error fetching data:",
+        error.response?.data || error.message
+      );
     }
   };
   // Correctly closed useEffect hook
   useEffect(() => {
     countData();
-    getBookingList();
   }, []);
 
   return (
     <div>
       <Helmet>
-        <title>Dashboard [Hotel Management]</title>
+        <title>Dashboard</title>
       </Helmet>
       {/* Start */}
 
@@ -90,7 +77,6 @@ const Index = () => {
                           <p className="mb-0 text-white">Today Users</p>
                           <h4 className="my-1 text-white">{totalUsers}</h4>
                         </div>
-                        <div id="chart1" />
                       </div>
                     </div>
                   </div>
@@ -104,7 +90,6 @@ const Index = () => {
                           <p className="mb-0 text-dark">Total Post</p>
                           <h4 className="my-1 text-dark">{totalPost}</h4>
                         </div>
-                        <div id="chart4" />
                       </div>
                     </div>
                   </div>

@@ -78,7 +78,7 @@ const Navbar = () => {
         </div>
         <div className="user-box dropdown px-3">
           <a className="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="/assets/images/avatars/usdt.png" className="user-img" />
+            <img src="/assets/images/avatars/usdt.png" loading="lazy" className="user-img" />
             <div className="user-info">
               <p className="user-name mb-0">{user?.name || user?.email}</p>
               <p className="designattion mb-0">{role}</p>
