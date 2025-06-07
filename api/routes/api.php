@@ -22,6 +22,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Getway\SenMailController;
 use App\Http\Controllers\Getway\SenSMSController;
+use App\Http\Controllers\Installment\InstallmentController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/cc', function () {
@@ -118,6 +119,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('updateUser', [UserController::class, 'updateUser']);
         Route::post('updateUserProfileImg', [UserController::class, 'updateUserProfileImg']);
         Route::get('getOnlyMerchantList', [UserController::class, 'getOnlyMerchantList']);
+         Route::get('getCustomerData', [UserController::class, 'getCustomerData']);
         Route::get('findUserDetails', [UserController::class, 'findUserDetails']);
         Route::get('findMerchantDetails', [UserController::class, 'findMerchantDetails']);
         Route::get('checkCurrentUser', [UserController::class, 'checkCurrentUser']);
@@ -210,6 +212,12 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
     ], function () {
         Route::get('countBookingData', [DashboardController::class, 'countBookingData']);
         Route::get('getTodayBookingList', [DashboardController::class, 'getTodayBookingList']);
+    });
+
+        Route::group([
+        'prefix' => 'installment'
+    ], function () {
+        Route::post('createPayment', [InstallmentController::class, 'createPayment']);
     });
 
 

@@ -42,6 +42,10 @@ import PostEdit from "../pages/post/PostEdit.jsx";
 import Sendmail from "../pages/getway/Sendmail.jsx";
 import SendSms from "../pages/getway/SendSms.jsx";
 
+
+import PaymentList from "../pages/installment/PaymentList.jsx";
+import PaymentCreate from "../pages/installment/PaymentCreate.jsx";
+
 import RoomStatusList from "../pages/booking/RoomStatusList.jsx";
 import BookingList from "../pages/booking/BookingList.jsx";
 import AddNewBooking from "../pages/booking/AddNewBooking.jsx";
@@ -171,8 +175,10 @@ const AppRouter = () => {
       <Route path="/setting/properties-list" element={<OurProperties />} />
       <Route path="/setting/gallery-list" element={<Gallery />} />
       <Route path="/setting/review-list" element={<Review />} />
-
-		{/* Getway */}
+      {/* installment */}
+      <Route path="/installment/pyament-list" element={<PaymentList />} />
+      <Route path="/installment/create-payment" element={<PaymentCreate />} />
+		  {/* Getway */}
       <Route path="/getway/send-mail" element={<Sendmail />} />
       <Route path="/getway/send-sms" element={<SendSms />} />
 

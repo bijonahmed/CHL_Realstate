@@ -71,7 +71,7 @@ const Login = () => {
         <Header />
         <div
           className="d-flex align-items-center justify-content-center"
-          style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}
+          style={{ minHeight: "100vh", backgroundColor: "rgb(255, 255, 255)" }}
         >
           <div className="container">
             <div className="row justify-content-center">

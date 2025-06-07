@@ -47,7 +47,11 @@ const GuestNavbar = () => {
               <div className="col-lg-2 col-md-6 col-6">
                 <div className="vl-logo">
                   <Link to="/">
-                    <img src="/assets/img/logo/logo1.png" loading="lazy" alt="housa" />
+                    <img
+                      src="/assets/img/logo/logo1.png"
+                      loading="lazy"
+                      alt="housa"
+                    />
                   </Link>
                 </div>
               </div>
@@ -71,6 +75,27 @@ const GuestNavbar = () => {
                       <li>
                         <Link to="/contact">Contact Us</Link>
                       </li>
+
+                      {token ? (
+                        <>
+                          <li>
+                            <Link to="/dashboard">Dashboard</Link>
+                          </li>
+
+                          <li>
+                            <Link to="#" onClick={logoutUser}>Logout</Link>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li>
+                            <Link to="/login">Login</Link>
+                          </li>
+                          <li>
+                            <Link to="/register">Register</Link>
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </nav>
                 </div>
@@ -94,7 +119,11 @@ const GuestNavbar = () => {
             <div className="vl-offcanvas-header d-flex justify-content-between align-items-center mb-90">
               <div className="vl-offcanvas-logo">
                 <a href="index.html">
-                  <img src="/assets/img/logo/logo1.png" loading="lazy" alt="Image" />
+                  <img
+                    src="/assets/img/logo/logo1.png"
+                    loading="lazy"
+                    alt="Image"
+                  />
                 </a>
               </div>
               <div className="vl-offcanvas-close">
@@ -118,13 +147,15 @@ const GuestNavbar = () => {
               </span>
               <span>
                 <a href="#">
-                  <i className="fa-solid fa-phone" /> concreteholgingsltd@gmail.com
+                  <i className="fa-solid fa-phone" />{" "}
+                  concreteholgingsltd@gmail.com
                 </a>
               </span>
               <span>
                 <a href="#">
                   <i className="fa-solid fa-location-dot" />
-                  Eastern Housing 2nd phase , Pallabi, Mirpur , Dhaka, Bangladesh, 1216
+                  Eastern Housing 2nd phase , Pallabi, Mirpur , Dhaka,
+                  Bangladesh, 1216
                 </a>
               </span>
             </div>

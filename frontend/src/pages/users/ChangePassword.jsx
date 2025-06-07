@@ -16,6 +16,12 @@ const ChangePassword = () => {
   const [errors, setErrors] = useState({});
   const { getToken, token, logout } = AuthUser();
 
+
+
+
+
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -92,35 +98,46 @@ const ChangePassword = () => {
       {/* Start */}
 
       <div>
-        <Helmet>
-          <title>Change Password</title>
-        </Helmet>
         <div className="bg-white p-0">
           <Header />
           {/* Page Header */}
           <div
             className="container-fluid page-header mb-5 p-0"
-            style={{ backgroundImage: "url(/img/carousel-1.jpg)" }}
+            style={{ backgroundColor: "rgb(228, 177, 141)" }} // You can use any color like "#f8f9fa", "#007bff", etc.
           >
             <div className="container-fluid page-header-inner py-5">
-              <div className="container text-center pb-5">
-                <h1 className="display-3 text-white mb-3 animated slideInDown">
-                  Change Password
-                </h1>
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb justify-content-center text-uppercase">
-                    <li className="breadcrumb-item">
-                      <Link to="/">Home</Link>
-                    </li>
-
-                    <li
-                      className="breadcrumb-item text-white active"
-                      aria-current="page"
-                    >
-                      Change Password
-                    </li>
-                  </ol>
-                </nav>
+              <div className="container text-center mt-5">
+                <br /> <br />
+                <div
+                  className="d-flex align-items-center justify-content-between mb-4 animated slideInDown"
+                  style={{
+                    borderBottom: "2px solid #e4b18d",
+                    paddingBottom: "0.75rem",
+                  }}
+                >
+                  <h1
+                    className="fw-bold mb-0 text-dark"
+                    style={{ letterSpacing: "1px" }}
+                  >
+                    Change Password
+                  </h1>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary px-4"
+                    onClick={() => window.history.back()}
+                    style={{ transition: "background-color 0.3s, color 0.3s" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#e4b18d";
+                      e.currentTarget.style.color = "#fff";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "";
+                      e.currentTarget.style.color = "";
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -129,9 +146,17 @@ const ChangePassword = () => {
           {/* Room Start */}
           <div className="container-xxl py-1">
             <div className="container">
-              <div className="row">
-                <div className="">
-                  <div className="align-items-start w-100">
+              <div className="card radius-10">
+                {/* Start */}
+                <div className="card shadow-sm border-0">
+                  <div
+                    className="card-header text-white"
+                    style={{ backgroundColor: "rgb(228, 177, 141)" }}
+                  >
+                    <h5 className="mb-0">Change Password</h5>
+                  </div>
+
+                  <div className="card-body p-4">
                     <form onSubmit={handleSubmit}>
                       <div className="form-group mb-2">
                         <label htmlFor="password">Password</label>
@@ -190,20 +215,13 @@ const ChangePassword = () => {
                     </form>
                   </div>
                 </div>
+
+                {/* END */}
               </div>
             </div>
           </div>
-
-          <br/><br/>
-
+          <br />
           <Footer />
-
-          <a
-            href="#"
-            className="btn btn-lg btn-primary btn-lg-square back-to-top"
-          >
-            <i className="bi bi-arrow-up" />
-          </a>
         </div>
       </div>
 

@@ -99,7 +99,7 @@ class UserAuthController extends Controller
 
         $password = '#123456#';
         $username = $this->generateUniqueRandomNumber(); // you'll define this method
-        
+
         $user = User::create([
             'name'          => $request->name,
             'email'         => $request->email,
@@ -115,23 +115,23 @@ class UserAuthController extends Controller
 
 
         $domain   = $request->domain;
-        $loginUrl = "https://moon-nest.com/login";//$domain . '/login';
-       
+        $loginUrl = "https://moon-nest.com/login"; //$domain . '/login';
+
         $customData = [
             'username'   => $username,
             'login_url'  => $loginUrl,
             'password'   => $password
         ];
         // Send email
-        
-        
+
+
         $to = $request->email;
         $subject = 'Moon Nest Account';
-        
+
         $headers  = "MIME-Version: 1.0\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8\r\n";
         $headers .= "From: Moon Nest <info@moon-nest.com>\r\n";
-        
+
         $message = "
         <!DOCTYPE html>
         <html>
@@ -167,11 +167,11 @@ class UserAuthController extends Controller
         </body>
         </html>
         ";
-        
+
         mail($to, $subject, $message, $headers);
-                
-        
-       // Mail::to($request->email)->send(new Guestsendingmail($customData));
+
+
+        // Mail::to($request->email)->send(new Guestsendingmail($customData));
         //end
 
         $inviteCode               = $this->generateUniqueRandomNumber();
@@ -185,7 +185,6 @@ class UserAuthController extends Controller
         // Get the token
         $token = auth('api')->login($user);
         return $this->respondWithToken($token);
-
     }
     public function userRegister(Request $request)
     {
@@ -194,10 +193,22 @@ class UserAuthController extends Controller
 
         $this->validate($request, [
             'name'        => 'required',
-            'email'       => 'required|unique:users,email',
+            'phone'    => ['required', 'regex:/^01[0-9]{9}$/'], // Bangladeshi mobile number format without +88
+            'email'       => 'required|email|unique:users,email',
             'username'    => 'required|unique:users,username',
             'password'    => 'required|min:6|confirmed',
-            // 'password'   => 'required|min:6'
+        ], [
+            'name.required'         => 'Name is required.',
+            'phone.required'        => 'WhatsApp number is required.',
+            'phone.regex'           => 'WhatsApp number must be exactly 11 digits and must not include the country code (+88).',
+            'email.required'        => 'Email is required.',
+            'email.email'           => 'Email must be a valid email address.',
+            'email.unique'          => 'This email has already been taken.',
+            'username.required'     => 'Username is required.',
+            'username.unique'       => 'This username is already in use.',
+            'password.required'     => 'Password is required.',
+            'password.min'          => 'Password must be at least 6 characters long.',
+            'password.confirmed'    => 'Password confirmation does not match.',
         ]);
 
         $inviteCode       = $request->input('inviteCode');
@@ -206,6 +217,7 @@ class UserAuthController extends Controller
         $user = User::create([
             'name'                => $request->name,
             'email'               => $request->email,
+            'phone'               => $request->phone,
             'role_id'             => 2,
             'available_balance'   => !empty($setting->register_bonus) ? $setting->register_bonus : 0, // 3 UIC
             'ref_id'              => !empty($user->id) ? $user->id : "",

@@ -10,7 +10,7 @@ import AuthUser from "../../components/AuthUser";
 import Swal from "sweetalert2";
 
 const MyProfile = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const { getToken, token, logout } = AuthUser();
   const [errors, setErrors] = useState({});
   const [name, setName] = useState("");
@@ -156,44 +156,54 @@ const navigate = useNavigate();
   return (
     <div>
       <Helmet>
-        <title>Change Password</title>
+        <title>Profile</title>
       </Helmet>
       {/* Start */}
 
       <div>
-        <Helmet>
-          <title>Change Password</title>
-        </Helmet>
         <div className="bg-white p-0">
           <Header />
           {/* Page Header */}
           <div
             className="container-fluid page-header mb-5 p-0"
-            style={{ backgroundImage: "url(/img/carousel-1.jpg)" }}
+            style={{ backgroundColor: "rgb(228, 177, 141)" }} // You can use any color like "#f8f9fa", "#007bff", etc.
           >
             <div className="container-fluid page-header-inner py-5">
-              <div className="container text-center pb-5">
-                <h1 className="display-3 text-white mb-3 animated slideInDown">
-                  Change Password
-                </h1>
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb justify-content-center text-uppercase">
-                    <li className="breadcrumb-item">
-                      <Link to="/">Home</Link>
-                    </li>
-
-                    <li
-                      className="breadcrumb-item text-white active"
-                      aria-current="page"
-                    >
-                      Change Password
-                    </li>
-                  </ol>
-                </nav>
+              <div className="container text-center mt-5">
+                <br /> <br />
+                <div
+                  className="d-flex align-items-center justify-content-between mb-4 animated slideInDown"
+                  style={{
+                    borderBottom: "2px solid #e4b18d",
+                    paddingBottom: "0.75rem",
+                  }}
+                >
+                  <h1
+                    className="fw-bold mb-0 text-dark"
+                    style={{ letterSpacing: "1px" }}
+                  >
+                    Profile
+                  </h1>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary px-4"
+                    onClick={() => window.history.back()}
+                    style={{ transition: "background-color 0.3s, color 0.3s" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#e4b18d";
+                      e.currentTarget.style.color = "#fff";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "";
+                      e.currentTarget.style.color = "";
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-
 
           {/* start */}
           {/* Room Start */}
@@ -201,142 +211,140 @@ const navigate = useNavigate();
             <div className="container">
               <div className="card radius-10">
                 {/* Start */}
-                <div className="card-body p-4">
-                  <form onSubmit={handleSubmit}>
-                    <div className="row mb-3">
-                      <label
-                        htmlFor="input42"
-                        className="col-sm-3 col-form-label"
-                      >
-                        Name
-                      </label>
-                      <div className="col-sm-9">
-                        <div className="position-relative">
+                <div className="card shadow-sm border-0">
+                  <div
+                    className="card-header text-white"
+                    style={{ backgroundColor: "rgb(228, 177, 141)" }}
+                  >
+                    <h5 className="mb-0">Update Profile</h5>
+                  </div>
+
+                  <div className="card-body p-4">
+                    <form onSubmit={handleSubmit}>
+                      <div className="row mb-3">
+                        <label
+                          htmlFor="inputName"
+                          className="col-sm-3 col-form-label fw-semibold"
+                        >
+                          Full Name
+                        </label>
+                        <div className="col-sm-9">
                           <input
                             type="text"
-                            className="form-control"
-                            id="input42"
-                            placeholder="Enter Name"
+                            className={`form-control ${
+                              errors.name ? "is-invalid" : ""
+                            }`}
+                            id="inputName"
+                            placeholder="Enter full name"
                             value={name}
                             onChange={handleConfigName}
                           />
                           {errors.name && (
-                            <div style={{ color: "red" }}>{errors.name[0]}</div>
+                            <div className="invalid-feedback">
+                              {errors.name[0]}
+                            </div>
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    <div className="row mb-3">
-                      <label
-                        htmlFor="input42"
-                        className="col-sm-3 col-form-label"
-                      >
-                        Email
-                      </label>
-                      <div className="col-sm-9">
-                        <div className="position-relative">
+                      <div className="row mb-3">
+                        <label
+                          htmlFor="inputEmail"
+                          className="col-sm-3 col-form-label fw-semibold"
+                        >
+                          Email Address
+                        </label>
+                        <div className="col-sm-9">
                           <input
-                            type="text"
-                            className="form-control"
-                            id="input42"
-                            placeholder="Enter Email"
+                            type="email"
+                            className={`form-control ${
+                              errors.email ? "is-invalid" : ""
+                            }`}
+                            id="inputEmail"
+                            placeholder="Enter email"
                             value={email}
                             onChange={handleConfigEmail}
                           />
                           {errors.email && (
-                            <div style={{ color: "red" }}>
+                            <div className="invalid-feedback">
                               {errors.email[0]}
                             </div>
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    <div className="row mb-3">
-                      <label
-                        htmlFor="input42"
-                        className="col-sm-3 col-form-label"
-                      >
-                        Phone
-                      </label>
-                      <div className="col-sm-9">
-                        <div className="position-relative">
+                      <div className="row mb-3">
+                        <label
+                          htmlFor="inputPhone"
+                          className="col-sm-3 col-form-label fw-semibold"
+                        >
+                          Phone Number
+                        </label>
+                        <div className="col-sm-9">
                           <input
                             type="text"
-                            className="form-control"
-                            id="input42"
-                            placeholder="Enter Phone"
+                            className={`form-control ${
+                              errors.phone ? "is-invalid" : ""
+                            }`}
+                            id="inputPhone"
+                            placeholder="Enter phone"
                             value={phone}
                             onChange={handleConfigPhone}
                           />
                           {errors.phone && (
-                            <div style={{ color: "red" }}>
+                            <div className="invalid-feedback">
                               {errors.phone[0]}
                             </div>
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    <div className="row mb-3">
-                      <label
-                        htmlFor="input42"
-                        className="col-sm-3 col-form-label"
-                      >
-                        Username
-                      </label>
-                      <div className="col-sm-9">
-                        <div className="position-relative">
+                      <div className="row mb-4">
+                        <label
+                          htmlFor="inputUsername"
+                          className="col-sm-3 col-form-label fw-semibold"
+                        >
+                          Username
+                        </label>
+                        <div className="col-sm-9">
                           <input
                             type="text"
-                            className="form-control"
-                            id="input42"
-                            placeholder="Username"
+                            className={`form-control ${
+                              errors.username ? "is-invalid" : ""
+                            }`}
+                            id="inputUsername"
+                            placeholder="Enter username"
                             value={username}
                             onChange={handleConfigUsername}
                           />
                           {errors.username && (
-                            <div style={{ color: "red" }}>
+                            <div className="invalid-feedback">
                               {errors.username[0]}
                             </div>
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    <div className="row">
-                      <label className="col-sm-3 col-form-label" />
-                      <div className="col-sm-9">
-                        <div className="d-md-flex d-grid align-items-center gap-3">
+                      <div className="row">
+                        <div className="offset-sm-3 col-sm-9">
                           <button
                             type="submit"
-                            className="btn btn-primary px-4"
+                            className="btn btn-primary px-5"
                           >
-                            Submit
+                            Save Changes
                           </button>
                         </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
 
                 {/* END */}
               </div>
             </div>
           </div>
-
           <br />
-          <br />
-
           <Footer />
-
-          <a
-            href="#"
-            className="btn btn-lg btn-primary btn-lg-square back-to-top"
-          >
-            <i className="bi bi-arrow-up" />
-          </a>
         </div>
       </div>
 

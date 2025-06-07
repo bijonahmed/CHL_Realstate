@@ -242,6 +242,7 @@ class SettingController extends Controller
             'address'       => 'required',
             'whatsApp'      => 'required',
             'about_us'      => 'required',
+
         ]);
 
 
@@ -259,6 +260,7 @@ class SettingController extends Controller
             'about_us'            => $request->about_us,
             'fblink'              => $request->fblink,
             'youtubelink'         => $request->youtubelink,
+            'customer_message'    => $request->customer_message,
         );
 
         if (!empty($request->file('banner_image'))) {

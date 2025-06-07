@@ -22,6 +22,7 @@ class Setting extends Authenticatable
         'ongoing_image',
         'complete_image',
         'future_image',
+        'customer_message',
         'name',
     ];
 

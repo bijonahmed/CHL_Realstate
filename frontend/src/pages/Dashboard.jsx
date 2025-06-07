@@ -17,26 +17,21 @@ const Index = () => {
   const rawToken = sessionStorage.getItem("token");
   const token = rawToken?.replace(/^"(.*)"$/, "$1");
   const [roomData, setRoomData] = useState([]);
-
-  const fetechActiveBookingRooms = async () => {
-    setLoading(true);
+  const [data, setName] = useState({});
+  const fetchGlobalData = async () => {
     try {
-      const response = await axios.get(`/booking/activeBookingRooms`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      //console.log("API Response:", response.data); // Log the response
-      setRoomData(response.data);
+      const response = await axios.get(`/public/getGlobalData`);
+      setName(response.data);
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
       setLoading(false);
     }
   };
+
   // Correctly closed useEffect hook
   useEffect(() => {
-    fetechActiveBookingRooms();
+    fetchGlobalData();
   }, []);
 
   useEffect(() => {
@@ -50,130 +45,113 @@ const Index = () => {
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
+
       {/* Start */}
+      <div className="bg-white p-0">
+        <Header />
 
-      <div>
-        <Helmet>
-          <title>Dashboard</title>
-        </Helmet>
-        <div className="bg-white p-0">
-          <Header />
-          {/* Page Header */}
-          <div
-            className="container-fluid page-header mb-5 p-0"
-            style={{ backgroundImage: "url(/img/carousel-1.jpg)" }}
-          >
-            <div className="container-fluid page-header-inner py-5">
-              <div className="container text-center pb-5">
-                <h1 className="display-3 text-white mb-3 animated slideInDown">
-                  Dashboard
-                </h1>
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb justify-content-center text-uppercase">
-                    <li className="breadcrumb-item">
-                      <Link to="/">Home</Link>
-                    </li>
-                 
-                    <li
-                      className="breadcrumb-item text-white active"
-                      aria-current="page"
-                    >
-                      Dashboard
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-            </div>
-          </div>
+        {/* Page Header (Optional Section if needed) */}
+        <div className="space30" />
 
-
-          {/* start */}
-          {/* Room Start */}
-          <div className="container-xxl py-1">
-            <div className="container">
-              <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 className="section-title text-center text-primary text-uppercase">
-                  Booking History
-                </h6>
-              </div>
-              <div className="row g-4 mt-3">
-                {roomData.map((room, index) => (
-                  <div
-                    key={index}
-                    className="col-lg-4 col-md-6 wow fadeInUp"
-                    data-wow-delay="0.6s"
-                  >
-                    <div className="room-item shadow rounded overflow-hidden">
-                      <div className="position-relative">
-                        <img
-                          className="img-fluid"
-                          loading="lazy"
-                          src={room.roomImage || "/img/room-3.jpg"}
-                          alt="Room Image"
-                        />
-                        <small className="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">
-                          BDT.&nbsp;{room.roomPrice}/Night
-                        </small>
-                      </div>
-                      <div className="p-4 mt-2">
-                        <div className="d-flex justify-content-between mb-3">
-                          <h5 className="mb-0">
-                            {room.name || "Super Deluxe"}
-                          </h5>
-                          <div className="ps-2">
-                            <small className="fa fa-star text-primary" />
-                            <small className="fa fa-star text-primary" />
-                            <small className="fa fa-star text-primary" />
-                            <small className="fa fa-star text-primary" />
-                            <small className="fa fa-star text-primary" />
-                          </div>
-                        </div>
-
-                        <p
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            padding: "12px 16px",
-                            borderRadius: "8px",
-                            fontSize: "16px",
-                            color: "#212529",
-                            marginBottom: "16px",
-                            border: "1px solid #dee2e6",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-                          }}
-                        >
-                          <strong>Check in:</strong> {room.checkin} &nbsp;&nbsp;
-                          <strong>Check out:</strong> {room.checkout}
+        {/* About Section */}
+        <div className="miision1">
+          <div className="container-fluid">
+            <div className="row align-items-center mt-5">
+              <div className="container mt-4">
+                {/* Top Cards */}
+                <div className="row g-4 mb-4">
+                  <div className="col-md-4">
+                    <div className="card text-white bg-primary h-100 shadow-sm">
+                      <div className="card-body text-center">
+                        <i className="fa-solid fa-user-gear fa-2x mb-3"></i>
+                        <h5 className="card-title">Update Profile</h5>
+                        <p className="card-text">
+                          Keep your personal details current.
                         </p>
-
-                        <div className="d-flex justify-content-between">
-                          <Link to={`/booking-history-details/${room.booking_id}`} className="btn btn-sm btn-primary rounded py-2 px-4 w-100">
-                            View Detail
-                          </Link>
-                        </div>
+                        <Link
+                          to="/user/profile"
+                          className="btn btn-light btn-sm"
+                        >
+                          Edit Profile
+                        </Link>
                       </div>
                     </div>
                   </div>
-                ))}
+
+                  <div className="col-md-4">
+                    <div className="card text-white bg-warning h-100 shadow-sm">
+                      <div className="card-body text-center">
+                        <i className="fa-solid fa-lock fa-2x mb-3"></i>
+                        <h5 className="card-title">Change Password</h5>
+                        <p className="card-text">Keep your account secure.</p>
+                        <Link
+                          to="/user/change-password"
+                          className="btn btn-dark btn-sm"
+                        >
+                          Change Password
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4">
+                    <div className="card text-white bg-success h-100 shadow-sm">
+                      <div className="card-body text-center">
+                        <i className="fa-solid fa-list-ol fa-2x mb-3"></i>
+                        <h5 className="card-title">Installment List</h5>
+                        <p className="card-text">
+                          View your payment installments.
+                        </p>
+                        <Link
+                          to="/user/installments"
+                          className="btn btn-light btn-sm"
+                        >
+                          View Installments
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Welcome Card */}
+                <div className="card shadow-sm border-0 bg-light">
+                  <div className="card-body">
+                    <h4 className="card-title mb-3 text-primary">
+                      Welcome to Concrete Holdings Ltd.
+                    </h4>
+                    <p className="card-text" style={{ textAlign: "justify" }}>
+                      {loading ? (
+                        <center>
+                          <div
+                            style={{ textAlign: "center", padding: "50px 0" }}
+                          >
+                            <div className="loader"></div>
+                          </div>
+                        </center>
+                      ) : (
+                        data?.customer_message && (
+  <div
+    dangerouslySetInnerHTML={{
+      __html: data.customer_message.replace(/\n/g, '<br />'),
+    }}
+  />
+)
+
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <br />
-          <br />
-          {/* Room End */}
-
-          {/* end */}
-          <Footer />
-
-          <a
-            href="#"
-            className="btn btn-lg btn-primary btn-lg-square back-to-top"
-          >
-            <i className="bi bi-arrow-up" />
-          </a>
         </div>
-      </div>
 
-      {/* END */}
+        <div className="space30" />
+
+        {/* Footer */}
+        <Footer />
+      </div>
+      {/* End */}
     </div>
   );
 };

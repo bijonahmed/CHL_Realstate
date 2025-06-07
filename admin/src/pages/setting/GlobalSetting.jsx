@@ -17,6 +17,7 @@ const GlobalSetting = () => {
   const [fblink, setFacebookPagesLink] = useState("");
   const [youtubelink, setYoutubeChaneelLink] = useState("");
   const [about_us, setAboutus] = useState("");
+  const [customer_message, setCustomerMessage] = useState("");
   const [bannerImage, setBannerImage] = useState(null);
   const [ongoingImage, setOngoingImage] = useState(null);
   const [completeImage, setCompleteImage] = useState(null);
@@ -119,6 +120,7 @@ const GlobalSetting = () => {
       setFacebookPagesLink(userData.fblink || "");
       setYoutubeChaneelLink(userData.youtubelink || "");
       setAboutus(userData.about_us || "");
+      setCustomerMessage(userData.customer_message || "");
 
       setPreview(bannerimage || "");
       setOngoingPreview(ongoing_image || "");
@@ -131,6 +133,16 @@ const GlobalSetting = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+  setErrors((prev) => ({
+    ...prev,
+    confirmPassword: ["Passwords do not match"],
+  }));
+  return;
+}
+
+
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -141,6 +153,7 @@ const GlobalSetting = () => {
       formData.append("whatsApp", whatsApp);
       formData.append("fblink", fblink);
       formData.append("youtubelink", youtubelink);
+      formData.append("customer_message", customer_message);
 
       if (bannerImage) {
         formData.append("banner_image", bannerImage);
@@ -171,7 +184,7 @@ const GlobalSetting = () => {
         text: "Your data has been successfully saved.",
       });
 
-      navigate("/setting/global-setting");
+      navigate("/dashboard");
     } catch (error) {
       if (error.response && error.response.status === 422) {
         Swal.fire({
@@ -313,6 +326,25 @@ const GlobalSetting = () => {
                   </div>
                   <div className="row mb-3">
                     <label className="col-sm-3 col-form-label">
+                      Customer Message
+                    </label>
+                    <div className="col-sm-9">
+                      <textarea
+                        className="form-control"
+                        placeholder="About Us"
+                        value={customer_message}
+                        rows={10}
+                        onChange={(e) => setCustomerMessage(e.target.value)}
+                      ></textarea>
+                      {errors.customer_message && (
+                        <div style={{ color: "red" }}>
+                          {errors.customer_message[0]}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <label className="col-sm-3 col-form-label">
                       Banner Image
                     </label>
                     <div className="col-sm-9">
@@ -400,13 +432,9 @@ const GlobalSetting = () => {
                       )}
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-sm-9 offset-sm-3">
-                      <button type="submit" className="btn btn-primary">
-                        Save Settings
-                      </button>
-                    </div>
-                  </div>
+                  <button type="submit" className="btn btn-primary w-100">
+                    Save Settings
+                  </button>
                 </form>
               </div>
             </div>

@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import EditorComponent from "../../components/EditorComponent";
 
 const Sendmail = () => {
+  const [customerEmail, setCustomerData] = useState([]);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
@@ -91,7 +92,42 @@ const Sendmail = () => {
     }));
   };
 
-  useEffect(() => {}, []);
+  const fetchCustomerData = async () => {
+    try {
+      if (!token) {
+        throw new Error("Token not found in sessionStorage");
+      }
+      const response = await axios.get(`/user/getOnlyMerchantList`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.data) {
+        const customerList = response.data.data;
+
+        // ✅ Extract unique emails
+        const uniqueEmails = [...new Set(customerList.filter(Boolean))];
+
+        // ✅ Comma-separated string of emails
+        const emailList = uniqueEmails.join(",");
+
+        // ✅ Set emails into formData
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          emails: emailList,
+        }));
+
+        // Optional: store emailList in state if needed
+        setCustomerData(emailList); // only emails, not full objects
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomerData();
+  }, []);
 
   return (
     <>

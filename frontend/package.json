@@ -46,7 +46,7 @@
     "slate-react": "^0.111.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.13",
-    "sweetalert2": "^11.12.1",
+    "sweetalert2": "^11.22.0",
     "swiper": "^11.2.6",
     "vite-plugin-compression": "^0.5.1"
   },
