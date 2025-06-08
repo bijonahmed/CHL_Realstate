@@ -115,15 +115,17 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('changePasswordClient', [UserController::class, 'changePasswordClient']);
         Route::post('updateUserProPass', [UserController::class, 'updateUserProPass']);
         Route::post('saveUser', [UserController::class, 'saveUser']);
+        Route::post('updateCustomer', [UserController::class, 'updateCustomer']);
         Route::post('updateBookingUser', [UserController::class, 'updateBookingUser']);
         Route::post('updateUser', [UserController::class, 'updateUser']);
         Route::post('updateUserProfileImg', [UserController::class, 'updateUserProfileImg']);
         Route::get('getOnlyMerchantList', [UserController::class, 'getOnlyMerchantList']);
-         Route::get('getCustomerData', [UserController::class, 'getCustomerData']);
+        Route::get('getCustomerData', [UserController::class, 'getCustomerData']);
         Route::get('findUserDetails', [UserController::class, 'findUserDetails']);
         Route::get('findMerchantDetails', [UserController::class, 'findMerchantDetails']);
         Route::get('checkCurrentUser', [UserController::class, 'checkCurrentUser']);
         Route::get('getUserRow', [UserController::class, 'editUserId']);
+        Route::get('checkCustomerRemBalance', [UserController::class, 'checkCustomerRemBalance']);
         Route::get('allUsers', [UserController::class, 'allUsers']);
     });
 
@@ -218,6 +220,9 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         'prefix' => 'installment'
     ], function () {
         Route::post('createPayment', [InstallmentController::class, 'createPayment']);
+        Route::get('getInstallmentList', [InstallmentController::class, 'getInstallmentList']);
+        Route::get('checkInstallment', [InstallmentController::class, 'checkInstallment']);
+          Route::get('installmentUserData', [InstallmentController::class, 'installmentUserData']);
     });
 
 

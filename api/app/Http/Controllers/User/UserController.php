@@ -27,6 +27,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use App\Http\Controllers\Controller;
 use App\Imports\BulkAddressImport;
 use App\Models\BulkAddress;
+use App\Models\InstallmentPayment;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log; // Add this line
@@ -169,8 +170,8 @@ class UserController extends Controller
     public function getCustomerData(Request $request)
     {
         $dataArr1 = User::where('status', 1)
-                    ->where('role_id', 2)
-                    ->get();
+            ->where('role_id', 2)
+            ->get();
 
         $response = [
             'data' => $dataArr1,
@@ -269,7 +270,7 @@ class UserController extends Controller
         $query = User::orderBy('users.id', 'desc')
             ->where('users.role_id', $request->rule_id)
             ->join('rule', 'users.role_id', '=', 'rule.id')
-            ->select('users.company_name', 'users.created_at', 'users.username', 'lastlogin_country', 'register_ip', 'lastlogin_ip', 'users.ref_id', 'users.telegram', 'users.phone', 'users.role_id', 'users.id', 'users.name', 'users.email', 'users.phone_number', 'users.show_password', 'users.status', 'rule.name as rulename');
+            ->select('users.buying_amt', 'users.company_name', 'users.created_at', 'users.username', 'lastlogin_country', 'register_ip', 'lastlogin_ip', 'users.ref_id', 'users.telegram', 'users.phone', 'users.role_id', 'users.id', 'users.name', 'users.email', 'users.phone_number', 'users.show_password', 'users.status', 'rule.name as rulename');
 
         if ($searchQuery !== null) {
             $query->where('users.name', 'like', '%' . $searchQuery . '%');
@@ -315,6 +316,7 @@ class UserController extends Controller
                 'show_password' => $item->show_password,
                 'company'       => $item->company_name,
                 'username'      => $item->username,
+                'buying_amt'    => !empty($item->buying_amt) ? $item->buying_amt : "",
                 'telegram'      => $telegram,
                 'phone'         => $item->phone,
                 'status'        => $status,
@@ -341,6 +343,43 @@ class UserController extends Controller
             'message'  => 'success'
         ];
         return response()->json($response, 200);
+    }
+
+
+
+
+
+    public function checkCustomerRemBalance(Request $request)
+    {
+
+        //dd($request->all());
+        $userId = $request->userId;
+
+        // Validate the user ID
+        if (!$userId) {
+            return response()->json(['error' => 'User ID is required.'], 400);
+        }
+
+        // Fetch user record
+        $chkUserRow = User::find($userId);
+
+        if (!$chkUserRow) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        // Calculate total paid installments
+        $chkInsPay = InstallmentPayment::where('customer_id', $userId)->sum('amount');
+
+        // Calculate remaining balance
+        $calculated         = $chkUserRow->buying_amt - $chkInsPay;
+        $remaining_balance = max($calculated, 0); // Ensure it's not negative
+
+        return response()->json([
+            'name' => $chkUserRow->name,
+            'buying_amt' => $chkUserRow->buying_amt,
+            'total_paid' => $chkInsPay,
+            'remaining_balance' => $remaining_balance,
+        ]);
     }
 
     public function roleCheck(Request $request)
@@ -452,6 +491,91 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
+
+
+
+
+
+    public function updateCustomer(Request $request)
+    {
+        //  dd($request->all());
+        if (empty($request->id)) {
+            $validator = Validator::make($request->all(), [
+                'rule_id'    => 'required',
+                'name'       => 'required',
+                'phone'      => 'required',
+                'email'      => 'required|unique:users,email|max:255',
+                'buying_amt' => 'required',
+                'status'     => 'required',
+                'username'   => 'required|unique:users,username|max:255',
+                'password'   => 'min:5|required',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'rule_id'    => 'required',
+                'name'       => 'required',
+                'phone'      => 'required',
+                'buying_amt' => 'required|numeric',
+                'email'      => 'required|email',
+                'status'     => 'required',
+            ]);
+        }
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = array(
+            'role_id'       => !empty($request->rule_id) ? $request->rule_id : "",
+            'name'          => !empty($request->name) ? $request->name : "",
+            'phone'         => !empty($request->phone) ? $request->phone : "",
+            'username'      => !empty($request->username) ? $request->username : "",
+            'email'         => !empty($request->email) ? $request->email : "",
+            'buying_amt'    => $request->buying_amt,
+            'status'        => $request->status,
+            'entry_by'      => $this->userid,
+        );
+        // Handle new record creation
+        if (empty($request->id)) {
+            $data['password'] = !empty($request->password) ? Hash::make($request->password) : "";
+            $data['show_password'] = $request->password ?? "";
+        } else {
+            // Handle existing record update
+            if (!empty($request->password)) {
+                $data['password'] = Hash::make($request->password);
+                $data['show_password'] = $request->password;
+            }
+        }
+
+        if (!empty($request->file('file'))) {
+            $files = $request->file('file');
+            $fileName = Str::random(20);
+            $ext = strtolower($files->getClientOriginalExtension());
+            $path = $fileName . '.' . $ext;
+            $uploadPath = '/backend/files/';
+            $upload_url = $uploadPath . $path;
+            $files->move(public_path('/backend/files/'), $upload_url);
+            $file_url = $uploadPath . $path;
+            $data['image'] = $file_url;
+        }
+
+        if (empty($request->id)) {
+            $userId = User::insertGetId($data);
+        } else {
+            $userId = $request->id;
+            User::where('id', $request->id)->update($data);
+        }
+        $response = [
+            'message' => 'User register successfully insert UserID:' . $userId
+        ];
+        return response()->json($response);
+    }
+
+
+
+
+
 
     public function saveUser(Request $request)
     {

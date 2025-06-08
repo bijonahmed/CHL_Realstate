@@ -10,21 +10,40 @@ import axios from "/config/axiosConfig";
 import "../../components/css/RoleList.css";
 
 const PaymentList = () => {
-
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState(1);
-
-
+  const [customerId, setCustomerId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
+  const [customerList, setCustomerList] = useState([]);
+  const apiUrl = "/installment/getInstallmentList";
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  const handleCustomerChange = async (e) => {
+    const selectedId = e.target.value;
+    setCustomerId(selectedId);
+  };
 
-
-  const apiUrl = "/category/PostCategory";
+  const fetchCustomerData = async () => {
+    try {
+      if (!token) {
+        throw new Error("Token not found in sessionStorage");
+      }
+      const response = await axios.get(`/user/getCustomerData`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data) {
+        // console.log("Customer Data:" + response.data);
+        setCustomerList(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleSort = () => {
     const sortedData = [...data].sort((a, b) => {
@@ -55,8 +74,7 @@ const PaymentList = () => {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          searchQuery,
-          selectedFilter,
+          customerId,
           page: currentPage,
           pageSize,
         },
@@ -77,7 +95,6 @@ const PaymentList = () => {
     setCurrentPage(page);
   };
 
-
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
   };
@@ -87,14 +104,14 @@ const PaymentList = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/category/post-category-edit/${id}`);
+    navigate(`/installment/payment-edit/${id}`);
   };
-
 
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
-  }, [searchQuery, selectedFilter, currentPage, pageSize]);
+    fetchCustomerData();
+  }, [customerId, currentPage, pageSize]);
 
   return (
     <>
@@ -121,7 +138,10 @@ const PaymentList = () => {
                           <i className="bx bx-home-alt" />
                         </Link>
                       </li>
-                      <li className="breadcrumb-item active" aria-current="page">
+                      <li
+                        className="breadcrumb-item active"
+                        aria-current="page"
+                      >
                         List
                       </li>
                     </ol>
@@ -146,24 +166,31 @@ const PaymentList = () => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-5 mb-2 mb-md-0">
                           <div className="searchbar">
-                            <input
-                              type="text"
-                              placeholder="Search post category name..."
-                              className="form-control"
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                            <select
+                              className="form-select"
+                              id="customer_id"
+                              value={customerId}
+                              onChange={handleCustomerChange}
+                            >
+                              <option value="">All Customer</option>
+                              {Array.isArray(customerList) &&
+                                customerList.map((customer) => (
+                                  <option key={customer.id} value={customer.id}>
+                                    {customer.name} | {customer.phone} |{" "}
+                                    {customer.email}
+                                  </option>
+                                ))}
+                            </select>
                           </div>
                         </div>
-
-
 
                         <div className="col-12 col-md-1 mb-2 mb-md-0">
                           <div className="searchbar">
                             <select
                               className="form-select"
                               value={pageSize}
-                              onChange={handlePageSizeChange}>
+                              onChange={handlePageSizeChange}
+                            >
                               <option value="10">10</option>
                               <option value="20">20</option>
                               <option value="50">50</option>
@@ -179,18 +206,11 @@ const PaymentList = () => {
                         </div>
 
                         <div className="col-12 col-md-2 d-flex justify-content-between align-items-center gap-2">
-                          <select
-                            className="form-select"
-                            value={selectedFilter}
-                            onChange={(e) => setSelectedFilter(e.target.value)}>
-                            <option value="">All Status</option>
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                          </select>
                           <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={fetchData}>
+                            onClick={fetchData}
+                          >
                             Apply
                           </button>
                         </div>
@@ -207,24 +227,38 @@ const PaymentList = () => {
                           <table className="table table-striped table-bordered">
                             <thead>
                               <tr>
-                                <th className="text-center"
+                                <th>ID</th>
+                                <th
+                                  className="text-center"
                                   onClick={handleSort}
-                                  style={{ cursor: "pointer" }}>
-                                  Name
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Customer Name
                                   {sortOrder === "asc" ? (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↑
                                     </span>
                                   ) : (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↓
                                     </span>
                                   )}
                                 </th>
-                               
-                                <th className="text-center">Status</th>
+
+                                <th className="text-center">Total Paid</th>
+                                <th className="text-center">Payment Method</th>
+                                <th className="text-center">Payment Date</th>
+                                <th className="text-center">Created By</th>
                                 <th className="text-center">Action</th>
                               </tr>
                             </thead>
@@ -232,17 +266,33 @@ const PaymentList = () => {
                               {data.length > 0 ? (
                                 data.map((item) => (
                                   <tr key={item.id}>
+                                    <td>{item.id}</td>
                                     <td>{item.name}</td>
-                                    <td className="text-center">{item.status}</td>
-                                    <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
-
+                                    <td className="text-center">
+                                      {item.total_paid}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.payment_method}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.created_at}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.createdBy}
+                                    </td>
+                                    <td className="text-center">
+                                      <a
+                                        href="#"
+                                        onClick={() => handleEdit(item.id)}
+                                      >
+                                        <i className="lni lni-pencil-alt"></i>
+                                      </a>
+                                    </td>
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
-                                  <td
-                                    colSpan="9"
-                                    className="text-center">
+                                  <td colSpan="9" className="text-center">
                                     No data found
                                   </td>
                                 </tr>

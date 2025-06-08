@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import GuestNavbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer";
 import LeftSideBarComponent from "../../components/LeftSideBarComponent";
 import axios from "/config/axiosConfig";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const PaymentCreate = () => {
+const PaymentEdit = () => {
+  const { id } = useParams();
+  const rawToken = sessionStorage.getItem("token");
+  const token = rawToken?.replace(/^"(.*)"$/, "$1");
+  const navigate = useNavigate();
+
   const [errors, setErrors] = useState({});
   const [customerId, setCustomerId] = useState("");
   const [buyingAmt, setBuyingAmt] = useState("");
@@ -24,7 +28,29 @@ const PaymentCreate = () => {
   const [notes, setNotes] = useState("");
   const [image, setImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const token = JSON.parse(sessionStorage.getItem("token"));
+
+  const defaultFetch = async () => {
+    try {
+      const response = await axios.get(`/installment/checkInstallment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: { id: id }, // or simply { userId } using shorthand
+      });
+      const userData = response.data.data;
+      setCustomerId(userData.customer_id);
+      setBuyAmt(userData.buying_amt);
+      setTotalPaidAmount(userData.total_paid);
+      setAmount(userData.amount);
+      setRemainingAmt(userData.remaining_balance);
+      setPaymentDate(userData.payment_date);
+      setPaymentMethod(userData.payment_method);
+      setPreviewImage(response.data.moneyRecipt)
+      //console.log("API response data:", userData.customer_id); // Debugging: Check API response
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -41,30 +67,12 @@ const PaymentCreate = () => {
   const handleCustomerChange = async (e) => {
     const selectedId = e.target.value;
     setCustomerId(selectedId);
-    const selectedCustomer = customerList.find(
-      (customer) => customer.id.toString() === selectedId
-    );
-    try {
-      const response = await axios.get("/user/checkCustomerRemBalance", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: { userId: selectedId },
-      });
-      // console.log("BuyingAmt:" + response.data.remaining_balance);
-      setRemainingAmt(response.data.remaining_balance || "");
-      setBuyAmt(response.data.buying_amt || "");
-      setTotalPaidAmount(response.data.total_paid || "");
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
   };
 
   const handleAmountChange = (value) => {
     setAmount(value);
     const buying = parseFloat(buying_amt || 0);
     const amt = parseFloat(value || 0);
-
     setRemainingAmt(buying - amt);
   };
 
@@ -91,7 +99,7 @@ const PaymentCreate = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("id", "");
+      formData.append("id", id);
       formData.append("customer_id", customerId);
       formData.append("buying_amt", buying_amt);
       formData.append("total_paid", total_paid);
@@ -151,19 +159,19 @@ const PaymentCreate = () => {
     }
   };
 
-  const navigate = useNavigate();
   const handleAddNewClick = () => {
     navigate("/installment/pyament-list");
   };
 
   useEffect(() => {
     fetchCustomerData();
+    defaultFetch();
   }, []);
 
   return (
     <>
       <Helmet>
-        <title>Payment Create</title>
+        <title>Edit</title>
       </Helmet>
 
       <div>
@@ -176,7 +184,7 @@ const PaymentCreate = () => {
           <div className="page-wrapper">
             <div className="page-content">
               <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Payment Create</div>
+                <div className="breadcrumb-title pe-3">Edit</div>
                 <div className="ps-3">
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb mb-0 p-0">
@@ -189,7 +197,7 @@ const PaymentCreate = () => {
                         className="breadcrumb-item active"
                         aria-current="page"
                       >
-                        Add New
+                        Edit Payment
                       </li>
                     </ol>
                   </nav>
@@ -280,8 +288,7 @@ const PaymentCreate = () => {
                       </div>
                     </div>
 
-
-                     <div className="row mb-3">
+                    <div className="row mb-3">
                       <label
                         htmlFor="amount"
                         className="col-sm-3 col-form-label"
@@ -322,7 +329,6 @@ const PaymentCreate = () => {
                           placeholder="0.00"
                           value={remainingAmt} // ✅ Use amount here
                         />
-                         
                       </div>
                     </div>
 
@@ -454,7 +460,6 @@ const PaymentCreate = () => {
                     </div>
                   </form>
                 </div>
-
                 {/* END */}
               </div>
             </div>
@@ -471,4 +476,4 @@ const PaymentCreate = () => {
   );
 };
 
-export default PaymentCreate;
+export default PaymentEdit;

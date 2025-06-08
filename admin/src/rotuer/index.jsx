@@ -23,6 +23,10 @@ import CheckLogAPI from "../pages/report/CheckLogAPI.jsx";
 
 import RoleEdit from "../pages/users/EditRole.jsx";
 import UserEdit from "../pages/users/EditUser.jsx";
+import EditCustomer from "../pages/users/EditCustomer.jsx";
+
+
+
 import SuperAdminList from "../pages/users/SuperAdminList.jsx";
 import CustomerList from "../pages/users/CustomerList.jsx";
 import UserAddAdmin from "../pages/users/UserAddAdmin.jsx";
@@ -45,6 +49,7 @@ import SendSms from "../pages/getway/SendSms.jsx";
 
 import PaymentList from "../pages/installment/PaymentList.jsx";
 import PaymentCreate from "../pages/installment/PaymentCreate.jsx";
+import PaymentEdit from "../pages/installment/PaymentEdit.jsx";
 
 import RoomStatusList from "../pages/booking/RoomStatusList.jsx";
 import BookingList from "../pages/booking/BookingList.jsx";
@@ -111,6 +116,7 @@ const AppRouter = () => {
       <Route path="/user/user-add-supperadmin" element={<UserAddSupperAdmin />} />
       <Route path="/user/role-edit/:id" element={<RoleEdit />} />
       <Route path="/user/user-edit/:id" element={<UserEdit />} />
+       <Route path="/user/customer-edit/:id" element={<EditCustomer />} />
       <Route path="/user/users-list" element={<MerchantList />} />
       <Route path="/user/superadmin-list" element={<SuperAdminList />} />
       <Route path="/user/customer-list" element={<CustomerList />} />
@@ -178,6 +184,8 @@ const AppRouter = () => {
       {/* installment */}
       <Route path="/installment/pyament-list" element={<PaymentList />} />
       <Route path="/installment/create-payment" element={<PaymentCreate />} />
+      <Route path="/installment/payment-edit/:id" element={<PaymentEdit />} />
+      
 		  {/* Getway */}
       <Route path="/getway/send-mail" element={<Sendmail />} />
       <Route path="/getway/send-sms" element={<SendSms />} />

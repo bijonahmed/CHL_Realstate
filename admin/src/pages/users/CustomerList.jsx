@@ -10,7 +10,6 @@ import axios from "/config/axiosConfig";
 import "../../components/css/RoleList.css";
 
 const CustomerList = () => {
-
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState(1);
@@ -18,14 +17,13 @@ const CustomerList = () => {
   const [searchEmail, setFilterEmail] = useState("");
   const [searchUsername, setFilterUsername] = useState("");
 
-
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
-  const merchant_rule = 3; 
+  const merchant_rule = 3;
 
   const apiUrl = "/user/allUsers";
 
@@ -45,15 +43,13 @@ const CustomerList = () => {
   };
 
   const handleEmailChange = (e) => {
-    setFilterEmail(e.target.value); 
+    setFilterEmail(e.target.value);
   };
-  
 
   const handleUsernameChange = (e) => {
     setFilterUsername(e.target.value); // Update state with the input value
   };
   const fetchData = async () => {
-
     setLoading(true);
     try {
       const rawToken = sessionStorage.getItem("token");
@@ -93,7 +89,6 @@ const CustomerList = () => {
     setCurrentPage(page);
   };
 
-
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
   };
@@ -103,14 +98,26 @@ const CustomerList = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/user/user-edit/${id}`);
+    navigate(`/user/customer-edit/${id}`);
   };
 
+  /*
+  const handleEdit = (id) => {
+    navigate(`/user/user-edit/${id}`);
+  };
+  */
 
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
-  }, [searchQuery, selectedFilter, searchEmail, searchUsername, currentPage, pageSize]);
+  }, [
+    searchQuery,
+    selectedFilter,
+    searchEmail,
+    searchUsername,
+    currentPage,
+    pageSize,
+  ]);
 
   return (
     <>
@@ -137,7 +144,10 @@ const CustomerList = () => {
                           <i className="bx bx-home-alt" />
                         </Link>
                       </li>
-                      <li className="breadcrumb-item active" aria-current="page">
+                      <li
+                        className="breadcrumb-item active"
+                        aria-current="page"
+                      >
                         List
                       </li>
                     </ol>
@@ -172,7 +182,6 @@ const CustomerList = () => {
                           </div>
                         </div>
 
-
                         <div className="col-12 col-md-2 mb-2 mb-md-0">
                           <div className="searchbar">
                             <input
@@ -181,11 +190,9 @@ const CustomerList = () => {
                               className="form-control"
                               value={searchEmail}
                               onChange={handleEmailChange}
-                              
                             />
                           </div>
                         </div>
-
 
                         <div className="col-12 col-md-2 mb-2 mb-md-0">
                           <div className="searchbar">
@@ -199,13 +206,13 @@ const CustomerList = () => {
                           </div>
                         </div>
 
-
                         <div className="col-12 col-md-1 mb-2 mb-md-0">
                           <div className="searchbar">
                             <select
                               className="form-select"
                               value={pageSize}
-                              onChange={handlePageSizeChange}>
+                              onChange={handlePageSizeChange}
+                            >
                               <option value="10">10</option>
                               <option value="20">20</option>
                               <option value="50">50</option>
@@ -224,7 +231,8 @@ const CustomerList = () => {
                           <select
                             className="form-select"
                             value={selectedFilter}
-                            onChange={(e) => setSelectedFilter(e.target.value)}>
+                            onChange={(e) => setSelectedFilter(e.target.value)}
+                          >
                             <option value="">All Status</option>
                             <option value="1">Active</option>
                             <option value="0">Inactive</option>
@@ -232,8 +240,9 @@ const CustomerList = () => {
                           <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={fetchData}>
-                            Apply
+                            onClick={fetchData}
+                          >
+                            Filter
                           </button>
                         </div>
                       </div>
@@ -249,27 +258,38 @@ const CustomerList = () => {
                           <table className="table table-striped table-bordered">
                             <thead>
                               <tr>
-                                <th className="text-center"
+                                <th
+                                  className="text-center"
                                   onClick={handleSort}
-                                  style={{ cursor: "pointer" }}>
+                                  style={{ cursor: "pointer" }}
+                                >
                                   Name
                                   {sortOrder === "asc" ? (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↑
                                     </span>
                                   ) : (
                                     <span
-                                      style={{ marginLeft: "5px", fontSize: "14px", }}>
+                                      style={{
+                                        marginLeft: "5px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
                                       ↓
                                     </span>
                                   )}
                                 </th>
                                 <th className="text-center">Email</th>
-                                <th className="text-center">Phone Number</th>
+                                <th className="text-center">Phone</th>
                                 <th className="text-center">Username</th>
+                                <th className="text-center">Buying Amount</th>
+                                <th className="text-center">Register Date</th>
                                 <th className="text-center">Status</th>
-                                <th className="text-center">Created Time</th>
                                 <th className="text-center">Action</th>
                               </tr>
                             </thead>
@@ -279,19 +299,35 @@ const CustomerList = () => {
                                   <tr key={item.id}>
                                     <td>{item.name}</td>
                                     <td className="text-left">{item.email}</td>
-                                    <td className="text-center">{item.phone}</td>
-                                    <td className="text-left">{item.username}</td>
-                                    <td className="text-center">{item.status}</td>
-                                    <td className="text-center">{item.created_at}</td>
-                                    <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
+                                    <td className="text-center">
+                                      {item.phone}
+                                    </td>
+                                    <td className="text-left">
+                                      {item.username}
+                                    </td>
+                                     <td className="text-end">
+                                      {item.buying_amt && <>TK. {item.buying_amt}</>}
+                                    </td>
 
+                                    <td className="text-center">
+                                      {item.created_at}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.status}
+                                    </td>
+                                    <td className="text-center">
+                                      <a
+                                        href="#"
+                                        onClick={() => handleEdit(item.id)}
+                                      >
+                                        <i className="lni lni-pencil-alt"></i>
+                                      </a>
+                                    </td>
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
-                                  <td
-                                    colSpan="9"
-                                    className="text-center">
+                                  <td colSpan="9" className="text-center">
                                     No data found
                                   </td>
                                 </tr>

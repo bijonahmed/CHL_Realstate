@@ -134,15 +134,6 @@ const GlobalSetting = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-  setErrors((prev) => ({
-    ...prev,
-    confirmPassword: ["Passwords do not match"],
-  }));
-  return;
-}
-
-
     try {
       const formData = new FormData();
       formData.append("name", name);
