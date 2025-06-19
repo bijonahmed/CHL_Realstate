@@ -145,12 +145,13 @@ const Login = () => {
                           </div>
                         )}
                       </div>
-                     
+
                       <div className="col-12">
                         <div className="d-grid">
                           <button
                             type="submit"
-                            className="btn btn-primary"
+                            style={{ backgroundColor: "rgb(254, 108, 5)", color: 'white' }}
+                            className="btn btn-default"
                             disabled={loading}
                           >
                             {loading ? "Processing..." : "Sign in"}
@@ -159,20 +160,23 @@ const Login = () => {
                       </div>
                     </form>
 
-                     <div className="text-center mt-3">
-                                <p>Already have an account? <Link to="/register" className="text-primary">Sign Up</Link></p>
-                              </div>
-                              <div className="d-flex justify-content-center">
-                        <Link
-                          to="/"
-                          className="btn btn-outline-primary d-flex align-items-center"
-                        >
-                          <i className="bx bx-arrow-back me-2"></i> Back to Home
+                    <div className="text-center mt-3">
+                      <p>
+                        Already have an account?{" "}
+                        <Link to="/register" className="text-primary">
+                          Sign Up
                         </Link>
-                      </div>
+                      </p>
+                    </div>
 
-
-
+                    <div className="d-flex justify-content-center mt-4">
+                      <Link
+                        to="/"
+                        className="btn btn-outline-primary d-flex align-items-center"
+                      >
+                        <i className="bx bx-arrow-back me-2"></i> Back to Home
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

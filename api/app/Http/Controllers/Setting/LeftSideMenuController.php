@@ -31,6 +31,12 @@ class LeftSideMenuController extends Controller
                 'icon' => 'bx bx-home-alt',
                 'submenu' => []
             ],
+             [
+                'label' => 'Transaction Report',
+                'path' => '/report/transaction-report',
+                'icon' => 'bx bx-message-square-edit',
+                'submenu' => []
+            ],
             [
                 'label' => 'Users Management',
                 'path' => '#',

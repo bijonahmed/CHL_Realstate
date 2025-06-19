@@ -15,15 +15,15 @@ const Project = () => {
   const { slug } = useParams();
 
   const projectTitles = {
-    "ongoing-project": "Ongoing Project",
     "complete-project": "Complete Project",
-    "future-project": "Future Project",
+    "ongoing-project": "Ongoing Project",
+    "upcoming-project": "Upcoming Project"
   };
 
   const makeParameter = {
-    "ongoing-project": 5,
-    "complete-project": 6,
-    "future-project": 7,
+    "complete-project": 7,
+    "ongoing-project": 6,
+    "upcoming-project": 5,
   };
 
   const projectName = projectTitles[slug] || "";
@@ -69,7 +69,7 @@ const Project = () => {
   return (
     <div>
       <Helmet>
-        <title>Project {projectName}</title>
+        <title>{projectName}</title>
       </Helmet>
       <Header />
       <div className="inner-header-area">

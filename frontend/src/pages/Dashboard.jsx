@@ -57,7 +57,7 @@ const Index = () => {
         <div className="miision1">
           <div className="container-fluid">
             <div className="row align-items-center mt-5">
-              <div className="container mt-4">
+              <div className="container mt-5">
                 {/* Top Cards */}
                 <div className="row g-4 mb-4">
                   <div className="col-md-4">
@@ -65,9 +65,9 @@ const Index = () => {
                       <div className="card-body text-center">
                         <i className="fa-solid fa-user-gear fa-2x mb-3"></i>
                         <h5 className="card-title">Update Profile</h5>
-                        <p className="card-text">
-                          Keep your personal details current.
-                        </p>
+                        <span className="card-text">
+                          Keep your personal details current.<br/>
+                        </span>
                         <Link
                           to="/user/profile"
                           className="btn btn-light btn-sm"
@@ -83,7 +83,7 @@ const Index = () => {
                       <div className="card-body text-center">
                         <i className="fa-solid fa-lock fa-2x mb-3"></i>
                         <h5 className="card-title">Change Password</h5>
-                        <p className="card-text">Keep your account secure.</p>
+                        <span className="card-text">Keep your account secure.</span><br/>
                         <Link
                           to="/user/change-password"
                           className="btn btn-dark btn-sm"
@@ -99,9 +99,9 @@ const Index = () => {
                       <div className="card-body text-center">
                         <i className="fa-solid fa-list-ol fa-2x mb-3"></i>
                         <h5 className="card-title">Installment List</h5>
-                        <p className="card-text">
-                          View your payment installments.
-                        </p>
+                        <span className="card-text">
+                          View your payment installments.<br/>
+                        </span>
                         <Link
                           to="/user/installments"
                           className="btn btn-light btn-sm"
@@ -119,26 +119,26 @@ const Index = () => {
                     <h4 className="card-title mb-3 text-primary">
                       Welcome to Concrete Holdings Ltd.
                     </h4>
-                    <p className="card-text" style={{ textAlign: "justify" }}>
+                    <span className="card-text" style={{ textAlign: "justify" }}>
                       {loading ? (
-                        <center>
-                          <div
-                            style={{ textAlign: "center", padding: "50px 0" }}
-                          >
+                        
+                          <div style={{ textAlign: "center", padding: "50px 0" }}>
                             <div className="loader"></div>
                           </div>
-                        </center>
+                        
                       ) : (
                         data?.customer_message && (
-  <div
-    dangerouslySetInnerHTML={{
-      __html: data.customer_message.replace(/\n/g, '<br />'),
-    }}
-  />
-)
-
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: data.customer_message.replace(
+                                /\n/g,
+                                "<br />"
+                              ),
+                            }}
+                          />
+                        )
                       )}
-                    </p>
+                    </span>
                   </div>
                 </div>
               </div>

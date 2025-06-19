@@ -89,6 +89,10 @@ const Footer = () => {
                   <li>
                     <Link to="/contact">Contact Us</Link>
                   </li>
+                   <li>
+                    <Link to="/download">Download Apps</Link>
+                  </li>
+                  {/* http://api.concreteholdingsbd.com/chl.apk */}
                 </ul>
               </div>
             </div>

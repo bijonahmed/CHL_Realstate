@@ -8,6 +8,7 @@ use App\Models\Attribute;
 use App\Models\AttributeValues;
 use App\Models\Booking;
 use App\Models\Categorys;
+use App\Models\InstallmentPayment;
 use App\Models\MiningCategory;
 use App\Models\MiningHistory;
 use App\Models\Mystore;
@@ -45,68 +46,43 @@ class ReportController extends Controller
     }
 
 
-    public function filterBybookingReport(Request $request)
+    public function filterByReport(Request $request)
     {
 
         // dd($request->all());
 
         $fromDate     =  $request->fromDate;
         $toDate       =  $request->toDate;
-        $booking_id   =  $request->booking_id;
-        $customer_id  =  $request->customer_id;
-        $status       =  $request->selectedFilter;
+        $customerId   =  $request->customer_id;
 
-        $query = Booking::query()
+        $chkUser = User::where('id',$customerId)->select('id','name','buying_amt')->first();
+
+       
+
+        $query = InstallmentPayment::query()
             ->select(
-                'booking.*',
-                'room.name as room_name',
-                'booking.checkin',
-                'booking.checkout',
-                'room.roomPrice',
-                'room.roomDescription',
-                'bed_type.name as bed_name',
-                \DB::raw('DATEDIFF(booking.checkout, booking.checkin) as total_booking_days')
+                'installment_payment.*',
+                'users.name as customername'
             )
-            ->leftJoin('room', 'booking.room_id', '=', 'room.id')
-            ->leftJoin('bed_type', 'room.bed_type_id', '=', 'bed_type.id');
+            ->leftJoin('users', 'installment_payment.customer_id', '=', 'users.id');
 
-        // Filter: Only if fromDate and toDate exist
+
+       
         if ($fromDate && $toDate) {
-            $query->whereBetween(\DB::raw('DATE(booking.created_at)'), [$fromDate, $toDate]);
+            $query->whereBetween(\DB::raw('DATE(installment_payment.created_at)'), [$fromDate, $toDate]);
         }
-        // Filter by Booking ID
-        if ($booking_id) {
-            $query->where('booking.booking_id', $booking_id);
+     
+        if ($customerId) {
+            $query->where('installment_payment.customer_id', $customerId);
         }
-        // Filter by Customer ID
-        if ($customer_id) {
-            $query->where('booking.customer_id', $customer_id); // or your actual customer/user field
-        }
-        // Filter by status
-        if ($status) {
-            $query->where('booking.booking_status', $status); // change field name if needed
-        }
+     
+        $rdata = $query->get();
 
-        $bookingData = $query->get();
+        
+        $data['rdata']         = $rdata; 
+        $data['buying_amount'] = !empty($chkUser) ? $chkUser->buying_amt : 0; 
 
-        return response()->json($bookingData, 200);
-
-        // $bookingData = Booking::where('booking.booking_status', 1)
-        //     ->select(
-        //         'booking.*',
-        //         'room.name as room_name',
-        //         'booking.checkin',
-        //         'booking.checkout',
-        //         'room.roomPrice',
-        //         'room.roomDescription',
-        //         'bed_type.name as bed_name',
-        //         \DB::raw('DATEDIFF(booking.checkout, booking.checkin) as total_booking_days')
-        //     )
-        //     ->whereDate('booking.created_at', $checkToday)
-        //     ->leftJoin('room', 'booking.room_id', '=', 'room.id') // Fixing bed_type join
-        //     ->leftJoin('bed_type', 'room.bed_type_id', '=', 'bed_type.id') // Fixing bed_type join
-        //     ->get();
-
-        // return response()->json($bookingData, 200);
+        return response()->json($data, 200);
+ 
     }
 }

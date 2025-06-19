@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import AuthUser from "../components/AuthUser";
 import Footer from "../components/Footer";
+import "../components/css/GuestNavbar.css";
+//import "../components/css/Project.css";
 import axios from "/config/axiosConfig";
 import $ from "jquery";
 
@@ -11,6 +13,9 @@ const GuestNavbar = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const { getToken, token, logout } = AuthUser();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const fetechGlobalData = async () => {
     try {
@@ -50,49 +55,70 @@ const GuestNavbar = () => {
                     <img
                       src="/assets/img/logo/logo1.png"
                       loading="lazy"
-                      alt="housa"
+                      alt="CHL"
                     />
                   </Link>
                 </div>
               </div>
+
+              {/* Desktop Menu */}
               <div className="col-lg-7 d-none d-lg-block">
                 <div className="vl-main-menu text-center">
-                  <nav className="vl-mobile-menu-active">
-                    <ul>
-                      <li className="has-dropdown">
-                        <Link to="/">Home </Link>
+                  <nav>
+                    <ul className="navbar-nav d-flex flex-row justify-content-center gap-3">
+                      <li className="nav-item">
+                        <Link to="/" className="nav-link">
+                          Home
+                        </Link>
                       </li>
-                      <li>
-                        <Link to="/about-us">About Us</Link>
+                      <li className="nav-item">
+                        <Link to="/about-us" className="nav-link">
+                          About Us
+                        </Link>
                       </li>
-
-                      <li>
-                        <Link to="/service">Our Services</Link>
+                      <li className="nav-item">
+                        <Link to="/service" className="nav-link">
+                          Our Services
+                        </Link>
                       </li>
-                      <li>
-                        <Link to="/our-vision">Mision & Vision</Link>
+                      <li className="nav-item">
+                        <Link to="/our-vision" className="nav-link">
+                          Mission & Vision
+                        </Link>
                       </li>
-                      <li>
-                        <Link to="/contact">Contact Us</Link>
+                      <li className="nav-item">
+                        <Link to="/contact" className="nav-link">
+                          Contact Us
+                        </Link>
                       </li>
-
                       {token ? (
                         <>
-                          <li>
-                            <Link to="/dashboard">Dashboard</Link>
+                          <li className="nav-item">
+                            <Link to="/dashboard" className="nav-link">
+                              Dashboard
+                            </Link>
                           </li>
-
-                          <li>
-                            <Link to="#" onClick={logoutUser}>Logout</Link>
+                          <li className="nav-item">
+                            <Link
+                              to="#"
+                              className="nav-link"
+                              onClick={logoutUser}
+                            >
+                              Logout
+                            </Link>
                           </li>
                         </>
                       ) : (
                         <>
-                          <li>
-                            <Link to="/login">Login</Link>
+                          <li className="nav-item">
+                            <Link to="/login" className="nav-link">
+                              Login
+                            </Link>
                           </li>
-                          <li>
-                            <Link to="/register">Register</Link>
+                          <li className="nav-item">
+                            <Link to="/register" className="nav-link">
+                              Register
+                            </Link>
                           </li>
                         </>
                       )}
@@ -100,10 +126,20 @@ const GuestNavbar = () => {
                   </nav>
                 </div>
               </div>
+
+              {/* Hamburger Menu Toggle Button */}
               <div className="col-lg-3 col-md-6 col-6">
-                <div className="vl-header-action-item d-block d-lg-none">
-                  <button type="button" className="vl-offcanvas-toggle">
-                    <i className="fa-solid fa-bars-staggered" />
+                <div className="vl-header-action-item d-block d-lg-none text-end">
+                  <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mobileNavbar"
+                    aria-controls="mobileNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                  >
+                    <i className="fa-solid fa-bars-staggered"></i>
                   </button>
                 </div>
               </div>
@@ -111,14 +147,71 @@ const GuestNavbar = () => {
           </div>
         </div>
       </header>
-      {/*=====HEADER END =======*/}
-      {/*===== MOBILE HEADER STARTS =======*/}
-      <div className="homepage4-body">
+
+      {/* ===== Mobile Collapse Menu (Bootstrap 5) ===== */}
+      <div className="collapse navbar-collapse d-lg-none" id="mobileNavbar">
+        <ul className="navbar-nav p-3 bg-white border-top mt-5">
+          <li className="nav-item">
+            <Link to="/" className="nav-link">
+              Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/about-us" className="nav-link">
+              About Us
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/service" className="nav-link">
+              Our Services
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/our-vision" className="nav-link">
+              Mission & Vision
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/contact" className="nav-link">
+              Contact Us
+            </Link>
+          </li>
+          {token ? (
+            <>
+              <li className="nav-item">
+                <Link to="/dashboard" className="nav-link">
+                  Dashboard
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="#" className="nav-link" onClick={logoutUser}>
+                  Logout
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="nav-item">
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/register" className="nav-link">
+                  Register
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+
+      {/* <div className={`homepage4-body ${isOffcanvasOpen ? "offcanvas-open" : ""}`}>
         <div className="vl-offcanvas">
           <div className="vl-offcanvas-wrapper">
             <div className="vl-offcanvas-header d-flex justify-content-between align-items-center mb-90">
               <div className="vl-offcanvas-logo">
-                <a href="index.html">
+                <a href="/">
                   <img
                     src="/assets/img/logo/logo1.png"
                     loading="lazy"
@@ -142,20 +235,19 @@ const GuestNavbar = () => {
               <span>
                 <a href="#">
                   {" "}
-                  <i className="fa-regular fa-envelope" /> +8801712-903789
+                  <i className="fa-regular fa-envelope" />
+                  {name.whatsApp}
                 </a>
               </span>
               <span>
                 <a href="#">
-                  <i className="fa-solid fa-phone" />{" "}
-                  concreteholgingsltd@gmail.com
+                  <i className="fa-solid fa-phone" /> {name.email}
                 </a>
               </span>
               <span>
                 <a href="#">
                   <i className="fa-solid fa-location-dot" />
-                  Eastern Housing 2nd phase , Pallabi, Mirpur , Dhaka,
-                  Bangladesh, 1216
+                  {name.address}
                 </a>
               </span>
             </div>
@@ -166,20 +258,11 @@ const GuestNavbar = () => {
               <a href="https://www.facebook.com/chl.propertys" target="_blank">
                 <i className="fab fa-facebook-f" />
               </a>
-              {/* <a href="#">
-                <i className="fab fa-twitter" />
-              </a>
-              <a href="#">
-                <i className="fab fa-linkedin-in" />
-              </a>
-              <a href="#">
-                <i className="fab fa-instagram" />
-              </a> */}
             </div>
           </div>
         </div>
         <div className="vl-offcanvas-overlay" />
-      </div>
+      </div> */}
 
       {/* ------------- Header end ----------------  */}
     </>

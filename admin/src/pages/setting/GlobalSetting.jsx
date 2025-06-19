@@ -359,7 +359,7 @@ const GlobalSetting = () => {
                   <div className="row">
                     {/* Ongoing Project */}
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">Ongoing Project</label>
+                      <label className="form-label" style={{ color: 'green'}}>Complete Project</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -381,7 +381,7 @@ const GlobalSetting = () => {
 
                     {/* Complete Project */}
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">Complete Project</label>
+                      <label className="form-label" style={{ color: 'green'}}>Ongoing Project</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -403,7 +403,7 @@ const GlobalSetting = () => {
 
                     {/* Future Project */}
                     <div className="col-md-6 mb-3">
-                      <label className="form-label">Future Project</label>
+                      <label className="form-label" style={{ color: 'green'}}>Upcoming Project</label>
                       <input
                         type="file"
                         accept="image/*"

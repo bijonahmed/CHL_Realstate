@@ -9,11 +9,62 @@ import { Helmet } from "react-helmet";
 const ProjectSection = ({ data }) => {
   const projectList = [
     {
-      key: "ongoing",
-      image: data.ongoing_image,
+      key: "Upcoming Project",
+      image: data.future_image,
+      label: "Upcoming Project",
+      alt: "Upcoming Project",
+      slug: "upcoming-project",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={48}
+          height={48}
+          viewBox="0 0 48 48"
+          fill="none"
+        >
+          <circle cx="24" cy="24" r="20" stroke="white" strokeWidth="3" />
+          <path
+            d="M24 12V24L32 28"
+            stroke="white"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      key: "Ongoing Project",
+      image: data.complete_image,
       label: "Ongoing Project",
-      alt: "ongoing-project",
+      alt: "Ongoing Project",
       slug: "ongoing-project",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={48}
+          height={48}
+          viewBox="0 0 48 48"
+          fill="none"
+        >
+          <circle cx="24" cy="24" r="20" stroke="white" strokeWidth="3" />
+          <path
+            d="M16 24l6 6 10-10"
+            stroke="white"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+
+    {
+      key: "Complete Project",
+      image: data.ongoing_image,
+      label: "Complete Project",
+      alt: "Complete Project",
+      slug: "complete-project",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -44,56 +95,6 @@ const ProjectSection = ({ data }) => {
         </svg>
       ),
     },
-    {
-      key: "complete",
-      image: data.complete_image,
-      label: "Complete Project",
-      alt: "complete-project",
-      slug: "complete-project",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={48}
-          height={48}
-          viewBox="0 0 48 48"
-          fill="none"
-        >
-          <circle cx="24" cy="24" r="20" stroke="white" strokeWidth="3" />
-          <path
-            d="M16 24l6 6 10-10"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      key: "future",
-      image: data.future_image,
-      label: "Future Project",
-      alt: "future-project",
-      slug: "future-project",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={48}
-          height={48}
-          viewBox="0 0 48 48"
-          fill="none"
-        >
-          <circle cx="24" cy="24" r="20" stroke="white" strokeWidth="3" />
-          <path
-            d="M24 12V24L32 28"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
   ];
 
   return (
@@ -103,12 +104,14 @@ const ProjectSection = ({ data }) => {
           <div className="service-single-boxarea">
             <div className="img1">
               {project.image ? (
-                 <Link to={`/project/${project.slug}`}><img
-                  src={project.image}
-                  loading="lazy"
-                  alt={project.alt}
-                  style={{ height: "300px", width: "100%" }}
-                /></Link>
+                <Link to={`/project/${project.slug}`}>
+                  <img
+                    src={project.image}
+                    loading="lazy"
+                    alt={project.alt}
+                    style={{ height: "300px", width: "100%" }}
+                  />
+                </Link>
               ) : (
                 <div
                   style={{
@@ -127,9 +130,7 @@ const ProjectSection = ({ data }) => {
             <div className="content-area">
               <div className="icons">{project.icon}</div>
               <div className="content">
-                <Link to={`/project/${project.slug}`}>
-                  {project.label}
-                </Link>
+                <Link to={`/project/${project.slug}`}>{project.label}</Link>
                 <div className="space16" />
               </div>
             </div>

@@ -7,28 +7,29 @@ import Footer from "../../components/Footer";
 import LeftSideBarComponent from "../../components/LeftSideBarComponent";
 import Pagination from "../../components/Pagination";
 import axios from "/config/axiosConfig";
+
 import "../../components/css/RoleList.css";
 
 const TransactionReport = () => {
   const [merchantdata, setMerchantData] = useState([]);
   const [data, setData] = useState([]);
-  const [booking_id, setBookingId] = useState("");
+  const [customerId, setCusId] = useState("");
   const [customer_id, setCustomer] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState(1);
+  const [buy_amount, setBuyingAmount] = useState();
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [loading, setLoading] = useState(false);
 
   const rawToken = sessionStorage.getItem("token");
   const token = rawToken?.replace(/^"(.*)"$/, "$1");
-  const apiUrl = "/report/filterBybookingReport";
+  const apiUrl = "/report/filterByReport";
 
-  const fetchMerchantData = async () => {
+  const fetchCustomerData = async () => {
     try {
       if (!token) {
         throw new Error("Token not found in sessionStorage");
       }
-      const response = await axios.get(`/user/getOnlyMerchantList`, {
+      const response = await axios.get(`/user/getCustomerData`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,18 +53,15 @@ const TransactionReport = () => {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          //searchQuery,
-          selectedFilter,
-          customer_id,
           fromDate,
           toDate,
-          booking_id,
+          customer_id,
         },
       });
 
       if (response.data) {
-        setData(response.data);
-       // setTotalPages(response.data.total_pages);
+        setData(response.data.rdata);
+        setBuyingAmount(response.data.buying_amount);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -92,12 +90,71 @@ const TransactionReport = () => {
     setFromDate(formatDate(priorDate));
   }, []);
 
+  const totalPaidAmount = data.reduce(
+    (sum, item) => sum + Number(item.total_paid),
+    0
+  );
 
+  const remainingBalance = Number(buy_amount) - totalPaidAmount;
+
+  const handlePrint = () => {
+    // Get the div content
+    const printContent = document.getElementById("printSection").innerHTML;
+
+    // Open a new window
+    const printWindow = window.open("", "", "width=900,height=650");
+    // Write the content including bootstrap CSS for styling
+    printWindow.document.write(`
+    <html>
+      <head>
+        <title>Print Report</title>
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+        />
+        <style>
+          body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: white;
+            color: black;
+          }
+          table, th, td {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+          }
+          th, td {
+            padding: 8px 12px;
+          }
+          table {
+            width: 100%;
+          }
+          /* Avoid breaking table rows */
+          tr, td, th {
+            page-break-inside: avoid;
+          }
+        </style>
+      </head>
+      <body>
+        ${printContent}
+      </body>
+    </html>
+  `);
+
+    printWindow.document.close();
+
+    // Wait for content to load then print and close
+    printWindow.focus();
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
-    fetchMerchantData();
-  }, [selectedFilter, customer_id,fromDate,toDate,booking_id]);
+    fetchCustomerData();
+  }, [customer_id, fromDate, toDate]);
 
   return (
     <>
@@ -140,53 +197,37 @@ const TransactionReport = () => {
                   <div className="container-fluid">
                     <div className="search-pagination-container">
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 mb-2 mb-md-0">
+                        <div className="col-12 col-md-2 mb-2 mb-md-0 d-none">
                           <div className="searchbar">
                             <input
                               type="text"
-                              placeholder="Search Booking ID..."
+                              placeholder="Installment ID..."
                               className="form-control"
-                              value={booking_id}
-                              onChange={(e) =>
-                                setBookingId(e.target.value)
-                              }
+                              value={customerId}
+                              onChange={(e) => setCusId(e.target.value)}
                             />
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-4 mb-2 mb-md-0">
-                        <select
-                          style={{ height: "46px" }}
-                          className="form-select"
-                          value={customer_id}
-                          onChange={(e) => setCustomer(e.target.value)} // ✅ This line is important
-                          id="input46"
-                        >
-                  <option value="">All Customer</option>
-                  {merchantdata.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name} | {user.phone}
-                    </option>
-                  ))}
-                </select>
-                        </div>
-
-                        <div className="col-12 col-md-4 mb-2 mb-md-0">
+                        <div className="col-12 col-md-3 mb-3 mb-md-0">
                           <select
                             style={{ height: "46px" }}
                             className="form-select"
-                            value={selectedFilter}
-                            onChange={(e) => setSelectedFilter(e.target.value)}
+                            value={customer_id}
+                            onChange={(e) => setCustomer(e.target.value)} // ✅ This line is important
+                            id="input46"
                           >
-                            <option value="">All Booking Status</option>
-                            <option value="1">Booking</option>
-                            <option value="2">Release</option>
-                            <option value="3">Cancel</option>
+                            <option value="">All Customer</option>
+                            {merchantdata.map((user) => (
+                              <option key={user.id} value={user.id}>
+                                {user.name} | {user.phone}
+                              </option>
+                            ))}
                           </select>
                         </div>
 
                         {/* From Date */}
-                        <div className="col-12 col-md-4 mb-2 mb-md-0 mt-3">
+                        <div className="col-12 col-md-2 mb-2 mb-md-0">
                           <div className="searchbar">
                             <input
                               type="date"
@@ -198,7 +239,7 @@ const TransactionReport = () => {
                         </div>
 
                         {/* To Date */}
-                        <div className="col-12 col-md-4 mb-2 mb-md-0 mt-3">
+                        <div className="col-12 col-md-2 mb-2 mb-md-0">
                           <div className="searchbar">
                             <input
                               type="date"
@@ -209,14 +250,28 @@ const TransactionReport = () => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-4 mb-2 mb-md-0 mt-3">
+                        <div className="col-12 col-md-3 mb-2 mb-md-0">
                           <div className="searchbar">
                             <button
                               type="button"
-                              className="btn btn-primary"
+                              className="btn btn-primary w-100"
                               onClick={fetchData}
                             >
-                              Filter
+                             <i className="fas fa-filter"></i>  Filter
+                            </button>
+
+                             
+                          </div>
+                        </div>
+
+                         <div className="col-12 col-md-2 mb-2 mb-md-0">
+                          <div className="searchbar">
+                            
+                            <button
+                              className="btn btn-primary mb-3 mt-2"
+                              onClick={handlePrint}
+                            >
+                              🖨️ Print
                             </button>
                           </div>
                         </div>
@@ -229,68 +284,63 @@ const TransactionReport = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="table-responsive">
-                          <table className="table align-middle mb-0 table-hover">
-                            <thead className="table-light">
-                              <tr>
-                                <th className="text-left">BookingID</th>
-                                <th className="text-left">Booking By</th>
-                                <th className="text-left">Check In/Out</th>
-                                <th className="text-center">Room Price</th>
-                                <th className="text-center">Bed Info</th>
-                                <th className="text-center">Payment Type</th>
-                                <th className="text-center">Status</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {data.length > 0 ? (
-                                data.map((item) => (
-                                  <tr key={item.id}>
-                                    <td>{item.booking_id}</td>
-                                    <td className="text-left">{item.name}-[{item.customer_id}]</td>
-                                    <td className="text-left">{item.checkin}---{item.checkout}</td>
-                                    <td className="text-center">{item.room_price} BDT</td>
-                                    <td className="text-center">{item.bed_name}</td>
-                                    <td className="text-center">{item.paymenttype == 1 ? 'Online' : item.paymenttype == 2 ? 'Offline' : ''}</td>
-                                    <td className="text-center">
-                                        <span
-                                          className={`badge ${
-                                            item.booking_status == 1
-                                              ? "bg-gradient-quepal"
-                                              : item.booking_status == 2
-                                              ? "bg-gradient-bloody"
-                                               : item.booking_status == 3
-                                              ? "bg-gradient-bloody"
-                                              : ""
-                                          } text-white shadow-sm w-100`}
-                                        >
-                                          {item.booking_status == 1
-                                            ? "Booking"
-                                            : item.booking_status == 2
-                                            ? "Release"
-                                            : item.booking_status == 3
-                                            ? "Cancel"
-                                            : ""}
-                                        </span>
-                                    </td>
-                                   
-                                  </tr>
-                                ))
-                              ) : (
+                        <div className="div_print" id="printSection">
+                          <div className="table-responsive">
+                            <table className="table align-middle mb-0 table-hover">
+                              <thead className="table-light">
                                 <tr>
-                                  <td colSpan="9" className="text-center">
-                                    No data found
-                                  </td>
+                                  <th className="text-left">Installment ID</th>
+                                  <th className="text-left">Customer Name</th>
+                                  <th className="text-left">Payment Date</th>
+                                  <th className="text-left">Paid Amount</th>
                                 </tr>
-                              )}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody>
+                                {data.length > 0 ? (
+                                  data.map((item) => (
+                                    <tr key={item.id}>
+                                      <td>{item.id}</td>
+                                      <td className="text-left">
+                                        {item.customername}
+                                      </td>
+                                      <td className="text-left">
+                                        {item.payment_date}
+                                      </td>
+                                      <td className="text-left">
+                                        {item.total_paid}
+                                      </td>
+                                    </tr>
+                                  ))
+                                ) : (
+                                  <tr>
+                                    <td colSpan="9" className="text-center">
+                                      No data found
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          <div className="bg-light p-3 rounded shadow-sm mt-3 text-end">
+                            {customer_id && (
+                              <p className="fw-bold mb-2">
+                                Buying Amount: {buy_amount}
+                              </p>
+                            )}
+                            <p className="fw-bold mb-0">
+                              Total Paid Amount:{" "}
+                              {totalPaidAmount.toLocaleString()} BDT
+                            </p>
+                            {customer_id && (
+                              <p className="fw-bold mb-2">
+                                Remaining Balance:{" "}
+                                {remainingBalance.toLocaleString()} BDT
+                              </p>
+                            )}
+                          </div>
                         </div>
                       )}
-
-                      <div className="text-end mt-3">
-                        <p className="fw-bold"> Total Amount: {data.reduce((sum, item) => sum + Number(item.room_price), 0).toLocaleString()} BDT</p>
-                      </div>
                     </div>
                   </div>
                 </div>

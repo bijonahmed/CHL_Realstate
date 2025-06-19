@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const PaymentCreate = () => {
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [errors, setErrors] = useState({});
   const [customerId, setCustomerId] = useState("");
   const [buyingAmt, setBuyingAmt] = useState("");
@@ -51,10 +52,26 @@ const PaymentCreate = () => {
         },
         params: { userId: selectedId },
       });
+
       // console.log("BuyingAmt:" + response.data.remaining_balance);
-      setRemainingAmt(response.data.remaining_balance || "");
-      setBuyAmt(response.data.buying_amt || "");
-      setTotalPaidAmount(response.data.total_paid || "");
+      // setRemainingAmt(response.data.remaining_balance || "");
+      // setBuyAmt(response.data.buying_amt || "");
+      // setTotalPaidAmount(response.data.total_paid || "");
+
+      const remaining = response.data.remaining_balance || "";
+      const buying = response.data.buying_amt || "";
+      const paid = response.data.total_paid || "";
+
+      setRemainingAmt(remaining);
+      setBuyAmt(buying);
+      setTotalPaidAmount(paid);
+
+      if (parseFloat(buying) === parseFloat(paid)) {
+      //  alert("Remaining balance is zero.");
+        setIsSubmitDisabled(true); // disable submit button
+      } else {
+        setIsSubmitDisabled(false); // enable if not fully paid
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -280,8 +297,7 @@ const PaymentCreate = () => {
                       </div>
                     </div>
 
-
-                     <div className="row mb-3">
+                    <div className="row mb-3">
                       <label
                         htmlFor="amount"
                         className="col-sm-3 col-form-label"
@@ -322,7 +338,6 @@ const PaymentCreate = () => {
                           placeholder="0.00"
                           value={remainingAmt} // ✅ Use amount here
                         />
-                         
                       </div>
                     </div>
 
@@ -446,6 +461,7 @@ const PaymentCreate = () => {
                           <button
                             type="submit"
                             className="btn btn-success px-4"
+                            disabled={isSubmitDisabled}
                           >
                             Submit Installment
                           </button>

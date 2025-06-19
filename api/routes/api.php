@@ -238,7 +238,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
     Route::group([
         'prefix' => 'report'
     ], function () {
-        Route::get('filterBybookingReport', [ReportController::class, 'filterBybookingReport']);
+        Route::get('filterByReport', [ReportController::class, 'filterByReport']);
     });
 
 

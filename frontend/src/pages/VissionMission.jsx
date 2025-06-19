@@ -85,8 +85,8 @@ const AboutUs = () => {
     
         {/*===== ABOUT AREA STARTS =======*/}
         {/*===== OTHERS AREA STARTS =======*/}
-        <div className="miision1">
-          <div className="containr-fluid">
+        
+          <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-12">
                 <div className="mission-heading heading1">
@@ -127,7 +127,7 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
-        </div>
+       
         {/*===== OTHERS AREA ENDS =======*/}
         <div className="space30" />
         {/*===== OTHERS AREA STARTS =======*/}

@@ -85,8 +85,8 @@ const AboutUs = () => {
         </div>
 
         {/* About Section */}
-        <div className="miision1">
-          <div className="container-fluid">
+        <div className="miision2">
+          <div className="container">
             <div className="row">
               <div className="col-lg-6 m-auto">
                 <div className="heading1 text-center space-margin33">

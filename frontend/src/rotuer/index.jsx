@@ -13,6 +13,7 @@ import Service from "../pages/Service.jsx";
 import Project from "../pages/Project.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
 import VissionMission from "../pages/VissionMission.jsx";
+import Download from "../pages/Download.jsx";
 import ChangePassword from "../pages/users/ChangePassword.jsx";
 import Installments from "../pages/users/Installments.jsx";
 //For Admin Panel 
@@ -48,6 +49,7 @@ const AppRouter = () => {
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/our-vision" element={<VissionMission />} />
       <Route path="/user/change-password" element={<ChangePassword />} />
+      <Route path="/download" element={<Download />} />
       <Route path="/user/installments" element={<Installments />} />
       <Route path="/user/profile" element={<MyProfile />} />
 

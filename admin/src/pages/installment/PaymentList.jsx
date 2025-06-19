@@ -104,7 +104,13 @@ const PaymentList = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/installment/payment-edit/${id}`);
+    //navigate(`/installment/payment-edit/${id}`);
+    const confirmEdit = window.confirm(
+      "Are you sure you want to edit this installment?"
+    );
+    if (confirmEdit) {
+      navigate(`/installment/payment-edit/${id}`);
+    }
   };
 
   // Correctly closed useEffect hook
