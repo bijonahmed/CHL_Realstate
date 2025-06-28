@@ -11,6 +11,7 @@ import Review from "../components/Review";
 import Swal from "sweetalert2";
 import Gallery from "../components/Gallery";
 
+
 const Index = () => {
   const [data, setName] = useState({});
   const [slugan, setSlugan] = useState({});
@@ -23,6 +24,8 @@ const Index = () => {
       console.error("Error fetching data", error);
     }
   };
+
+  
 
   useEffect(() => {
     fetchGlobalData();

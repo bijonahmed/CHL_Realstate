@@ -17,7 +17,7 @@ const Project = () => {
   const projectTitles = {
     "complete-project": "Complete Project",
     "ongoing-project": "Ongoing Project",
-    "upcoming-project": "Upcoming Project"
+    "upcoming-project": "Upcoming Project",
   };
 
   const makeParameter = {
@@ -151,12 +151,24 @@ const Project = () => {
 
                   return (
                     <div className="project-item" key={index}>
-                      <img
+                      
+                      {item.thumnail_img !== null &&
+                        item.thumnail_img !== "" && (
+                          <img
+                            loading="lazy"
+                            src={item.thumnail_img}
+                            alt={`Thumbnail for ${item.name || "project"}`}
+                            className="thumbnail"
+                          />
+                        )}
+
+                      {/* <img
                       loading="lazy"
                         src={item.thumnail_img}
                         alt={`Thumbnail for ${item.name || "project"}`}
                         className="thumbnail"
-                      />
+                      /> */}
+
                       <div className="project-content">
                         <h4 className="project-title">{item.name}</h4>
                         {isExpanded ? (

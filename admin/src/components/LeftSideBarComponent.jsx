@@ -12,6 +12,8 @@ const LeftSideBarComponent = () => {
   const [activeMenu, setActiveMenu] = useState(null);
   const { getToken, token, logout } = AuthUser();
 
+  
+
   useEffect(() => {
     axios
       .get("/setting/dynamicLeftSidebarmenu", {

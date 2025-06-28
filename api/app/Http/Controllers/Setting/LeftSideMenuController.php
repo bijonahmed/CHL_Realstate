@@ -12,6 +12,7 @@ class LeftSideMenuController extends Controller
 {
 
     protected $userid;
+    protected $role_id;
     public function __construct()
     {
         $this->middleware('auth:api');
@@ -19,6 +20,7 @@ class LeftSideMenuController extends Controller
         if (!empty($id)) {
             $user = User::find($id->id);
             $this->userid = $user->id;
+            $this->role_id = $user->role_id;
         }
     }
 
@@ -31,33 +33,7 @@ class LeftSideMenuController extends Controller
                 'icon' => 'bx bx-home-alt',
                 'submenu' => []
             ],
-             [
-                'label' => 'Transaction Report',
-                'path' => '/report/transaction-report',
-                'icon' => 'bx bx-message-square-edit',
-                'submenu' => []
-            ],
-            [
-                'label' => 'Users Management',
-                'path' => '#',
-                'icon' => 'bx bx-category',
-                'submenu' => [
-                    //  ['label' => 'Role List', 'path' => '/user/role-list', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Super Admin List', 'path' => '/user/superadmin-list', 'icon' => 'bx bx-radio-circle'],
-                    //  ['label' => 'Admin List', 'path' => '/user/admin-list', 'icon' => 'bx bx-radio-circle'],
-                   // ['label' => 'Users List', 'path' => '/user/users-list', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Customer List', 'path' => '/user/customer-list', 'icon' => 'bx bx-radio-circle']
-                ]
-            ],
-            [
-                'label' => 'Installment ',
-                'path' => '#',
-                'icon' => 'bx bx-category',
-                'submenu' => [
-                    ['label' => 'Payment', 'path' => '/installment/pyament-list', 'icon' => 'bx bx-radio-circle'],
-                  
-                ]
-            ],
+
             [
                 'label' => 'Mail/SMS',
                 'path' => '#',
@@ -94,6 +70,50 @@ class LeftSideMenuController extends Controller
                 ]
             ]
         ];
+
+        // ✅ Conditionally add "Users Management" menu for role_id == 3
+        if ($this->role_id == 1) {
+
+
+
+
+            $menu[] = [
+                'label' => 'Installment',
+                'path' => '#',
+                'icon' => 'bx bx-category',
+                'submenu' => [
+
+                    ['label' => 'Payment', 'path' => '/installment/pyament-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Transaction Report', 'path' => '/report/transaction-report', 'icon' => 'bx bx-radio-circle'],
+                ]
+            ];
+
+            $menu[] = [
+                'label' => 'Users Management',
+                'path' => '#',
+                'icon' => 'bx bx-category',
+                'submenu' => [
+                    ['label' => 'Super Admin List', 'path' => '/user/superadmin-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Customer List', 'path' => '/user/customer-list', 'icon' => 'bx bx-radio-circle'],
+                ]
+            ];
+        }
+
+
+        if ($this->role_id == 3) {
+            $menu[] = [
+                'label' => 'Users Management',
+                'path' => '#',
+                'icon' => 'bx bx-category',
+                'submenu' => [
+                    // ['label' => 'Super Admin List', 'path' => '/user/superadmin-list', 'icon' => 'bx bx-radio-circle'],
+                    //['label' => 'Role List', 'path' => '/user/role-list', 'icon' => 'bx bx-radio-circle'],
+                    //['label' => 'Customer List', 'path' => '/user/customer-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Admin List', 'path' => '/user/admin-list', 'icon' => 'bx bx-radio-circle'],
+                    //  ['label' => 'Users List', 'path' => '/user/users-list', 'icon' => 'bx bx-radio-circle'],
+                ]
+            ];
+        }
 
         return response()->json($menu);
     }
