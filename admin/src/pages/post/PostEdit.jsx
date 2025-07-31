@@ -19,26 +19,73 @@ const PostEdit = () => {
   const apiUrl = "/post/getPostrow";
   const { id } = useParams();
   const [bannerImage, setBannerImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]); // For uploading later
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        alert("Please upload a valid image file.");
-        return;
-      }
-      if (file.size > 2 * 1024 * 1024) {
-        alert("Image size must be less than 2MB.");
-        return;
-      }
-      setBannerImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
+  const handleRemoveImage = async (index) => {
+    const image = preview[index]; // contains { id, thumnail_img }
+
+    if (!image.id) {
+      // Just remove from frontend if no ID (new image not yet uploaded)
+      const updatedPreview = [...preview];
+      const updatedFiles = [...selectedFiles];
+      updatedPreview.splice(index, 1);
+      updatedFiles.splice(index, 1);
+      setPreview(updatedPreview);
+      setSelectedFiles(updatedFiles);
+      return;
+    }
+
+    try {
+      await axios.delete(`/post/post-image-history/${image.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const updatedPreview = [...preview];
+      updatedPreview.splice(index, 1);
+      setPreview(updatedPreview);
+
+      // You may not need this if it was uploaded before
+      setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error("Failed to delete image:", error);
+      alert("Failed to delete image.");
     }
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    if (!files.length) return;
+
+    const newPreviews = [];
+    const newFiles = [];
+
+    files.forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Each image must be less than 2MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview((prev) => [...prev, { thumnail_img: reader.result }]);
+      };
+      reader.readAsDataURL(file);
+
+      newFiles.push(file);
+    });
+
+    setSelectedFiles((prev) => [...prev, ...newFiles]);
+  };
   const defaultFetch = async () => {
     try {
       const response = await axios.get(`/category/getPostCategory`, {
@@ -64,8 +111,15 @@ const PostEdit = () => {
         params: { postId: id }, // or simply { userId } using shorthand
       });
       const userData = response.data.data;
-      setPreview(response.data.thumnail_img);
 
+      const thumbnail = response.data.thumnail_img;
+      const multipleImages = response.data.multiple_img;
+      setPreview(multipleImages);
+      if (Array.isArray(multipleImages) && multipleImages.length > 0) {
+        multipleImages.forEach((img) => {
+          console.log("Image URL:", img.thumnail_img);
+        });
+      }
       setName(userData.name || "");
       setPostCategoryId(userData.post_category_id || "");
       setDescription(userData.description || "");
@@ -82,43 +136,48 @@ const PostEdit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const formData = {
-        id,
-        name,
-        bannerImage,
-        post_category_id,
-        description,
-        status,
-      };
+      const formData = new FormData();
+
+      formData.append("id", id);
+      formData.append("name", name);
+      formData.append("post_category_id", post_category_id);
+      formData.append("description", description);
+      formData.append("status", status);
+
+      // Append multiple image files
+      if (selectedFiles && selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          console.log("Files: " + file);
+          formData.append("bannerImage[]", file); // 👈 Multiple files
+        });
+      }
+
       const response = await axios.post("/post/postInsert", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
-      //console.log(response.data);
-      const Toast = Swal.mixin({
+
+      // SweetAlert toast on success
+      Swal.fire({
         toast: true,
         position: "top-end",
+        icon: "success",
+        title: "Your data has been successfully saved.",
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        },
-      });
-      Toast.fire({
-        icon: "success",
-        title: "Your data has been successfully saved.",
       });
 
-      // Reset form fields and errors
+      // Reset form state
       setName("");
       setStatus("");
+      setBannerImage([]); // 👈 Clear images
+      setPreview([]); // 👈 Clear previews
       setErrors({});
-      //console.log(response.data.message);
+
       navigate("/post/post-list");
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -129,10 +188,9 @@ const PostEdit = () => {
             .map((err) => `<div>${err.join("<br>")}</div>`)
             .join(""),
         });
-        console.error("Validation errors:", error.response.data.errors);
         setErrors(error.response.data.errors);
       } else {
-        console.error("Error updating user:", error);
+        console.error("Submission error:", error);
       }
     }
   };
@@ -281,16 +339,58 @@ const PostEdit = () => {
                       <div className="col-sm-9">
                         <input
                           type="file"
+                          multiple
                           accept="image/*"
                           className="form-control"
                           onChange={handleImageChange}
                         />
-                        {preview && (
-                          <img
-                            src={preview}
-                            alt="Preview"
-                            style={{ marginTop: "10px", maxWidth: "200px" }}
-                          />
+                        {Array.isArray(preview) && preview.length > 0 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              flexWrap: "wrap",
+                              marginTop: "10px",
+                            }}
+                          >
+                            {preview.map((img, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <img
+                                  src={img.thumnail_img}
+                                  alt={`preview-${index}`}
+                                  style={{
+                                    maxWidth: "150px",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "5px",
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveImage(index)}
+                                  style={{
+                                    position: "absolute",
+                                    top: "5px",
+                                    right: "5px",
+                                    background: "red",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: "25px",
+                                    height: "25px",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  &times;
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>

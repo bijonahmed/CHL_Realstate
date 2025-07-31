@@ -20,6 +20,7 @@ use App\Models\ProductVarrient;
 use App\Models\AttributeValues;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Models\PostImageHistory;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,27 @@ class PostController extends Controller
         }
     }
 
+    public function deleteImageHistory($id)
+    {
+
+
+        $id    =  (int) $id;
+        $image = PostImageHistory::find($id);
+
+        if (!$image) {
+            return response()->json(['error' => 'Image not found'], 404);
+        }
+
+        // Optionally delete the physical file
+        $filePath = public_path($image->image_url);
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Image removed']);
+    }
     public function update(Request $request)
     {
         //dd($request->all());
@@ -86,45 +108,76 @@ class PostController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
+        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'name'             => 'required',
             'post_category_id' => 'required',
         ]);
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->input('name'))));
-        $data = array(
-            'name'                       => $request->name,
-            'slug'                       => $slug,
-            'description'                => !empty($request->description) ? $request->description : "",
-            'post_category_id'           => !empty($request->post_category_id) ? $request->post_category_id : "",
-            'status'                     => !empty($request->status) ? $request->status : "",
-            'entry_by'                   => $this->userid
-        );
-        // dd($data);
-        if (!empty($request->file('bannerImage'))) {
-            $files = $request->file('bannerImage');
-            $fileName = Str::random(20);
-            $ext = strtolower($files->getClientOriginalExtension());
-            $path = $fileName . '.' . $ext;
-            $uploadPath = '/backend/files/';
-            $upload_url = $uploadPath . $path;
-            $files->move(public_path('/backend/files/'), $upload_url);
-            $file_url = $uploadPath . $path;
-            $data['thumnail_img'] = $file_url;
-        }
-        //Post::create($data);
 
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->input('name'))));
+        $data = [
+            'name'             => $request->name,
+            'slug'             => $slug,
+            'description'      => $request->description ?? "",
+            'post_category_id' => $request->post_category_id ?? "",
+            'status'           => $request->status ?? "",
+            'entry_by'         => $this->userid
+        ];
+
+        // Save or update the post
         if (empty($request->id)) {
-            $resdata['post_id'] = Post::insertGetId($data);
+            $post_id = Post::insertGetId($data);
         } else {
-            $resdata = Post::find($request->id);
-            $resdata->update($data);
+            $post = Post::find($request->id);
+            $post->update($data);
+            $post_id = $post->id;
         }
-        return response()->json($resdata);
+
+        // Handle image upload
+        if (!empty($request->file('bannerImage'))) {
+            $images = $request->file('bannerImage');
+            $uploadPath = public_path('backend/files');
+
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            // Ensure $images is always an array
+            if (!is_array($images)) {
+                $images = [$images];
+            }
+
+            foreach ($images as $index => $file) {
+                if (!$file->isValid()) {
+                    continue;
+                }
+
+                $fileName = Str::random(20) . '.' . $file->getClientOriginalExtension();
+                $file->move($uploadPath, $fileName);
+                $file_url = '/backend/files/' . $fileName;
+
+                // Save thumbnail from first image only
+                if ($index === 0) {
+                    Post::where('id', $post_id)->update([
+                        'thumnail_img' => $file_url
+                    ]);
+                }
+
+                // Insert all images (including first one) to PostImageHistory
+                PostImageHistory::create([
+                    'post_id' => $post_id,
+                    'image_url' => $file_url,
+                ]);
+            }
+        }
+
+        return response()->json(['post_id' => $post_id]);
     }
+
 
     public function allPostList(Request $request)
     {
@@ -173,8 +226,22 @@ class PostController extends Controller
             ->select('posts.*', 'post_category.name as category_name')
             ->join('post_category', 'posts.post_category_id', '=', 'post_category.id')
             ->first();
+
+        $chkmultipleImg = PostImageHistory::where('post_id', $id)->get();
+
+        $arryData = [];
+        foreach ($chkmultipleImg as $v) {
+            $arryData[] = [
+                'id'                         => $v->id,
+                'post_id'                    => $v->post_id,
+                'thumnail_img'               => url($v->image_url),
+            ];
+        }
+
         $responseData['data']            = $data;
-        $responseData['thumnail_img']    = !empty($data->thumnail_img) ? url($data->thumnail_img) : "";
+        $responseData['multiple_img']    = $arryData;
+
+
         // dd($responseData);
         return response()->json($responseData);
     }

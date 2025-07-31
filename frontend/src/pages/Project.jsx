@@ -12,6 +12,7 @@ const Project = () => {
   const [postData, setPostData] = useState({});
   const [loading, setLoading] = useState(true);
   const [globalData, setGlobalData] = useState({});
+  const [imagehistoryData, setImghistoryData] = useState([]);
   const { slug } = useParams();
 
   const projectTitles = {
@@ -46,6 +47,7 @@ const Project = () => {
           params: { post_category_id: requestParameter },
         });
         setPostData(response.data);
+        setImghistoryData(response.imghistory);
       } catch (error) {
         console.error("Error fetching post data", error);
       } finally {
@@ -151,15 +153,66 @@ const Project = () => {
 
                   return (
                     <div className="project-item" key={index}>
-                      
-                      {item.thumnail_img !== null &&
-                        item.thumnail_img !== "" && (
-                          <img
-                            loading="lazy"
-                            src={item.thumnail_img}
-                            alt={`Thumbnail for ${item.name || "project"}`}
-                            className="thumbnail"
-                          />
+                      {Array.isArray(item.imghistory) &&
+                        item.imghistory.length > 0 && (
+                          <div
+                            id={`carousel-${item.id}`}
+                            className="carousel slide"
+                            data-bs-ride="carousel"
+                          >
+                            <div className="carousel-inner">
+                              {item.imghistory.map((img, index) => (
+                                <div
+                                  className={`carousel-item ${
+                                    index === 0 ? "active" : ""
+                                  }`}
+                                  key={img.id}
+                                >
+                                  <img
+                                    src={img.image_url}
+                                    className="d-block w-100"
+                                    alt={`Slide ${index}`}
+                                    style={{
+                                      maxHeight: "300px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Carousel controls */}
+                            {item.imghistory.length > 1 && (
+                              <>
+                                <button
+                                  className="carousel-control-prev"
+                                  type="button"
+                                  data-bs-target={`#carousel-${item.id}`}
+                                  data-bs-slide="prev"
+                                >
+                                  <span
+                                    className="carousel-control-prev-icon"
+                                    aria-hidden="true"
+                                  ></span>
+                                  <span className="visually-hidden">
+                                    Previous
+                                  </span>
+                                </button>
+                                <button
+                                  className="carousel-control-next"
+                                  type="button"
+                                  data-bs-target={`#carousel-${item.id}`}
+                                  data-bs-slide="next"
+                                >
+                                  <span
+                                    className="carousel-control-next-icon"
+                                    aria-hidden="true"
+                                  ></span>
+                                  <span className="visually-hidden">Next</span>
+                                </button>
+                              </>
+                            )}
+                          </div>
                         )}
 
                       {/* <img

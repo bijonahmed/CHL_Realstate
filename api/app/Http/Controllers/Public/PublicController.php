@@ -11,6 +11,7 @@ use App\Models\FeaturePropertiesSlider;
 use App\Models\Gallery;
 use App\Models\OurProperties;
 use App\Models\Post;
+use App\Models\PostImageHistory;
 use App\Models\Room;
 use App\Models\RoomImages;
 use App\Models\SelectedRoomFacility;
@@ -90,18 +91,30 @@ class PublicController extends Controller
     {
         $postCategoryId = $request->post_category_id;
         try {
-            $data = Post::where('posts.post_category_id', $postCategoryId)->where('posts.status', 1)
-                ->leftJoin('post_category', 'post_category.id', '=', 'posts.post_category_id') // Join first image
+            $data = Post::where('posts.post_category_id', $postCategoryId)
+                ->where('posts.status', 1)
+                ->leftJoin('post_category', 'post_category.id', '=', 'posts.post_category_id')
                 ->select('posts.*', 'post_category.name as postCatName')
                 ->get()
                 ->map(function ($arrdata) {
+                    // ✅ Proper Eloquent call with model class
+                    $chkGallery = PostImageHistory::where('post_id', $arrdata->id)->get()
+                        ->map(function ($image) {
+                            return [
+                                'id'          => $image->id,
+                                'post_id'     => $image->post_id,
+                                'image_url'   => url($image->image_url),
+                            ];
+                        });
+
                     return [
-                        'id'              => $arrdata->id,
-                        'name'            => $arrdata->name,
-                        'slug'            => $arrdata->slug,
-                        'description'     => $arrdata->description,
-                        'postCatName'     => $arrdata->postCatName,
-                        'thumnail_img'    => !empty($arrdata->thumnail_img) ? url($arrdata->thumnail_img) : ""
+                        'id'            => $arrdata->id,
+                        'name'          => $arrdata->name,
+                        'slug'          => $arrdata->slug,
+                        'description'   => $arrdata->description,
+                        'postCatName'   => $arrdata->postCatName,
+                        'imghistory'    => $chkGallery, // ✅ Return mapped image URLs
+                        'thumnail_img'  => !empty($arrdata->thumnail_img) ? url($arrdata->thumnail_img) : ""
                     ];
                 });
             return response()->json($data);

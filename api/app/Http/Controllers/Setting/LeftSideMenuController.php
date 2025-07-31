@@ -73,10 +73,6 @@ class LeftSideMenuController extends Controller
 
         // ✅ Conditionally add "Users Management" menu for role_id == 3
         if ($this->role_id == 1) {
-
-
-
-
             $menu[] = [
                 'label' => 'Installment',
                 'path' => '#',

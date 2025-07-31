@@ -154,6 +154,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
     Route::group([
         'prefix' => 'post'
     ], function () {
+        Route::delete('/post-image-history/{id}', [PostController::class, 'deleteImageHistory']);
         Route::post('postInsert', [PostController::class, 'save']);
         Route::post('update', [PostController::class, 'update']);
         Route::get('getPostrow', [PostController::class, 'postrow']);

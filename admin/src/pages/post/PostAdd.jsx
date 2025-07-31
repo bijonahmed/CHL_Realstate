@@ -21,7 +21,10 @@ const PostAdd = () => {
   const [bannerImage, setBannerImage] = useState(null);
   const [preview, setPreview] = useState(null);
   //const [description, setNameDescription] = useState("");
-
+  const handleRemoveImage = (indexToRemove) => {
+    setPreview(preview.filter((_, index) => index !== indexToRemove));
+    setBannerImage(bannerImage.filter((_, index) => index !== indexToRemove));
+  };
   const defaultFetch = async () => {
     try {
       const response = await axios.get(`/category/getPostCategory`, {
@@ -95,21 +98,34 @@ const PostAdd = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    const validFiles = files.filter((file) => {
       if (!file.type.startsWith("image/")) {
-        alert("Please upload a valid image file.");
-        return;
+        alert(`"${file.name}" is not a valid image file.`);
+        return false;
       }
-      if (file.size > 2 * 1024 * 1024) {
-        alert("Image size must be less than 2MB.");
-        return;
+      if (file.size > maxSize) {
+        alert(`"${file.name}" exceeds 2MB size limit.`);
+        return false;
       }
-      setBannerImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-    }
+      return true;
+    });
+
+    setBannerImage(validFiles);
+
+    const previewPromises = validFiles.map((file) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(previewPromises).then((results) => {
+      setPreview(results);
+    });
   };
 
   const navigate = useNavigate();
@@ -207,7 +223,6 @@ const PostAdd = () => {
                           onChange={(e) => setPostCategoryId(e.target.value)}
                         >
                           <option value="">Select Post Category</option>
-                          {/* Map over your categories */}
                           {categoryData.map((category) => (
                             <option key={category.id} value={category.id}>
                               {category.name}
@@ -255,16 +270,58 @@ const PostAdd = () => {
                       <div className="col-sm-9">
                         <input
                           type="file"
+                          multiple
                           accept="image/*"
                           className="form-control"
                           onChange={handleImageChange}
                         />
-                        {preview && (
-                          <img
-                            src={preview}
-                            alt="Preview"
-                            style={{ marginTop: "10px", maxWidth: "200px" }}
-                          />
+                        {Array.isArray(preview) && preview.length > 0 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              flexWrap: "wrap",
+                              marginTop: "10px",
+                            }}
+                          >
+                            {preview.map((src, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <img
+                                  src={src}
+                                  alt={`preview-${index}`}
+                                  style={{
+                                    maxWidth: "150px",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "5px",
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveImage(index)}
+                                  style={{
+                                    position: "absolute",
+                                    top: "5px",
+                                    right: "5px",
+                                    background: "red",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: "25px",
+                                    height: "25px",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  &times;
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -284,9 +341,7 @@ const PostAdd = () => {
                           onChange={(e) => setStatus(e.target.value)}
                         >
                           <option value="">Select Status</option>
-                          <option value={1} seleted>
-                            Active
-                          </option>
+                          <option value={1}>Active</option>
                           <option value={0}>Inactive</option>
                         </select>
                         {errors.status && (
